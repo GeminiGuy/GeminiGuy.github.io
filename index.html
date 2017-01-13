@@ -147,35 +147,137 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-Kafka-Controller" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/01/02/hello-world/">Hello World, 隔壁老王</a>
+      <a class="article-title" href="/2017/01/13/Kafka-Controller/">Kafka Controller</a>
     </h1>
   
 
         
-        <a href="/2017/01/02/hello-world/" class="archive-article-date">
-  	<time datetime="2017-01-02T15:48:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-01-02</time>
+        <a href="/2017/01/13/Kafka-Controller/" class="archive-article-date">
+  	<time datetime="2017-01-13T14:46:47.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-01-13</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+        <h1 id="Kafka-Controller"><a href="#Kafka-Controller" class="headerlink" title="Kafka Controller"></a>Kafka Controller</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>目前网上针对Kafka Controller的分析文章不算少，但是大多比较散乱，不够系统，因此趁着这次部门分享Kafka的机会，将一些知识点进行了梳理总结，学习过程中参考了一些原理性的分析文章和0.10版本的源码。本文埋了一些细节坑，待有时间再回来补全吧。对于Kafka的研究水平有限，如果文章中出现错误，还望在评论区交流指正，谢谢。下面我们首先从基础概念开始讲起。</p>
+<h2 id="基础概念"><a href="#基础概念" class="headerlink" title="基础概念"></a>基础概念</h2><ul>
+<li>什么是Controller： 从Kafka集群中选取一个broker作为controller，负责管理topic分区和副本的状态的变化，以及执行重分配分区之类的管理任务。</li>
+<li>Replication总共经历了三个版本的迭代，其优点如下：<ol>
+<li>解决了Zk的split-brain问题，分区状态的一致性得到保障</li>
+<li>更少的ZK监听器，减轻了Zk负载以及herd effect问题</li>
+<li>Leader的变化针对Zk的读写可以批量操作，减少failover过程中的延迟</li>
+<li>Controller将状态的改变直接通过RPC的方式通知相应broker，相比ZK队列方式更高效</li>
+</ol>
+</li>
+<li>名词解释<ul>
+<li>AR 当前已分配的副本列表</li>
+<li>RAR 重分配过的副本列表</li>
+<li>ORA 重分配之前的副本列表</li>
+<li>分区Leader 给定分区负责客户端读写的结点</li>
+<li>ISR “in-sync” replicas，能够与Leader保持同步的副本集合（Leader也在ISR中）</li>
+</ul>
+</li>
+<li>和controller相关的zookeeper路径说明<ol>
+<li>/controller：结点存放当前Controller信息<br><img src="http://oj5mvdqpa.bkt.clouddn.com/controller.png" alt="controller"></li>
+<li>/brokers/ids/[brokerId]：存放集群broker信息，包括ip、端口、jmx信息<br><img src="http://oj5mvdqpa.bkt.clouddn.com/brokers.png" alt="brokers">  </li>
+<li>/brokers/topics：子目录为topic列表<br><img src="http://oj5mvdqpa.bkt.clouddn.com/topics.png" alt="topics"></li>
+<li>/brokers/topics/[topic]：存放对应topic的各个分区AR<br><img src="http://oj5mvdqpa.bkt.clouddn.com/fanstop.png" alt="fanstop"></li>
+<li>/brokers/topics/[topic]/partitions/[partitionId]/state：结点存放当前topic各个分区的Leader、ISR、controller_epoch、leader_epoch等信息。<br><img src="http://oj5mvdqpa.bkt.clouddn.com/fanstop_state.png" alt="fanstop_state"></li>
+<li>/admin临时结点，只有相关操作时才会存在<ul>
+<li>/admin/delete_topics： 要删除的一些topic</li>
+<li>/admin/reassign_partitions：指导重新分配AR的路径，通过命令修改AR时会写入到这个路径下</li>
+<li>/admin/preferred_replica_election：分区需要重新选举第一个replica作为leader，即preferred replica。起到自动平衡Leader分配的作用，使用自带工具或者auto.leader.rebalance.enable=true均可</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<h2 id="LeaderAndIsrRequest-amp-UpdateMetadataRequest-amp-StopReplicaRequest"><a href="#LeaderAndIsrRequest-amp-UpdateMetadataRequest-amp-StopReplicaRequest" class="headerlink" title="LeaderAndIsrRequest &amp; UpdateMetadataRequest &amp; StopReplicaRequest"></a>LeaderAndIsrRequest &amp; UpdateMetadataRequest &amp; StopReplicaRequest</h2><h3 id="LeaderAndIsrRequest请求及响应"><a href="#LeaderAndIsrRequest请求及响应" class="headerlink" title="LeaderAndIsrRequest请求及响应"></a>LeaderAndIsrRequest请求及响应</h3><figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment"><span class="markdown">/**</span></span></div><div class="line"><span class="bullet">* </span>controllerId：controller所在的brokerId</div><div class="line"><span class="bullet">* </span>controllerEpoch：controller选举版本号</div><div class="line"><span class="bullet">* </span>partitionStates：Map[(topic, partitionId), PartitionState]</div><div class="line"><span class="bullet">* </span>liveLeaders：传入参数分区leader所在的broker集合</div><div class="line">*/</div><div class="line">public LeaderAndIsrRequest(<span class="built_in">int</span> controllerId, <span class="built_in">int</span> controllerEpoch, <span class="built_in">Map</span>&lt;TopicPartition, PartitionState&gt; partitionStates,<span class="built_in">Set</span>&lt;Node&gt; liveLeaders) &#123;...&#125;</div><div class="line"></div><div class="line"><span class="comment"><span class="markdown">/**</span></span></div><div class="line"><span class="bullet">* </span>controllerEpoch：controller选举版本号</div><div class="line"><span class="bullet">* </span>leader：分区leader所在的broker Id</div><div class="line"><span class="bullet">* </span>leaderEpoch：分区leader选举版本号</div><div class="line"><span class="bullet">* </span>isr：当前ISR列表</div><div class="line"><span class="bullet">* </span>zkVersion：分区在zookeeper上的状态信息，用作竞态更新</div><div class="line"><span class="bullet">* </span>replicas：分区副本列表</div><div class="line">*/</div><div class="line">public PartitionState(<span class="built_in">int</span> controllerEpoch, <span class="built_in">int</span> leader, <span class="built_in">int</span> leaderEpoch, <span class="built_in">List</span>&lt;Integer&gt; isr, <span class="built_in">int</span> zkVersion, <span class="built_in">Set</span>&lt;Integer&gt; replicas) &#123;        <span class="keyword">this</span>.controllerEpoch = controllerEpoch;        <span class="keyword">this</span>.leader = leader;        <span class="keyword">this</span>.leaderEpoch = leaderEpoch;        <span class="keyword">this</span>.isr = isr;        <span class="keyword">this</span>.zkVersion = zkVersion;        <span class="keyword">this</span>.replicas = replicas;    &#125;</div></pre></td></tr></table></figure>
+<p>请求响应流程：makeLeaders、makeFollowers具体逻辑留坑待填<br><img src="http://oj5mvdqpa.bkt.clouddn.com/LeaderAndIsrRequest.png" alt="LeaderAndIsrRequest"></p>
+<h3 id="UpdateMetadataRequest请求及响应"><a href="#UpdateMetadataRequest请求及响应" class="headerlink" title="UpdateMetadataRequest请求及响应"></a>UpdateMetadataRequest请求及响应</h3><figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment"><span class="markdown">/**</span></span></div><div class="line"><span class="bullet">* </span>可以看到此构造函数和LeaderAndIsrRequest请求类构造函数参数基本一致</div><div class="line"><span class="bullet">* </span>liveBrokers：存活的broker集合</div><div class="line">*/</div><div class="line">public UpdateMetadataRequest(<span class="built_in">int</span> version, <span class="built_in">int</span> controllerId, <span class="built_in">int</span> controllerEpoch, <span class="built_in">Map</span>&lt;TopicPartition, PartitionState&gt; partitionStates, <span class="built_in">Set</span>&lt;Broker&gt; liveBrokers)</div><div class="line">请求响应：</div><div class="line">每个broker都维护了相同的缓存，更新MetadataCache实例中的chace字段和aliveBroker字段，分别为topic对应的分区状态信息以及当前可用的broker列表</div><div class="line">``` </div><div class="line"></div><div class="line">### StopReplicaRequest请求及响应</div></pre></td></tr></table></figure>
+<p>public StopReplicaRequest(int controllerId, int controllerEpoch, boolean deletePartitions, Set<topicpartition> partitions)<br>请求响应：<br>ReplicaManager会移除replica所在的partition的Fetcher，即不再向该partition的leader拉取新的数据，再根据deletePartitions决定是否删除该replica对应的topic partition日志<br><figure class="highlight vhdl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">## Partition状态机</div><div class="line">- PartitionState四种分区状态如下：</div><div class="line">	- NonExistentPartition：该分区要么没有被创建过或曾经被创建过但后面删除了</div><div class="line">	- NewPartition：分区创建之后已经分配了副本，但是还没有选举出Leader和ISR</div><div class="line">	- OnlinePartition：分区Leader一旦被选举出来，就处在该状态</div><div class="line">	- OfflinePartition：如果leader选举出来后，leader broker宕机了，那么该分区就处于OfflinePartition状态</div><div class="line"></div><div class="line">- 分区状态转换图</div><div class="line">![partition_state](http://oj5mvdqpa.bkt.clouddn.com/partition_state.png)</div><div class="line">针对OnlinePartition,OfflinePartition <span class="comment">--&gt; OnlinePartition而言，有四种Leader选举器策略如下: </span></div><div class="line">	* OfflinePartitionLeaderSelector  </div><div class="line">	&gt; <span class="number">1</span>. <span class="keyword">If</span> at least one broker from the isr <span class="keyword">is</span> alive, it picks a broker from the live isr as the <span class="keyword">new</span> leader <span class="keyword">and</span> the live isr as the <span class="keyword">new</span> isr. </div><div class="line">	&gt; <span class="number">2</span>. <span class="keyword">Else</span>, <span class="keyword">if</span> unclean leader election <span class="keyword">for</span> the topic <span class="keyword">is</span> disabled, it throws a NoReplicaOnlineException.</div><div class="line">	&gt; <span class="number">3</span>. <span class="keyword">Else</span>, it picks some alive broker from the assigned replica list as the <span class="keyword">new</span> leader <span class="keyword">and</span> the <span class="keyword">new</span> isr.</div><div class="line">	&gt; <span class="number">4</span>. <span class="keyword">If</span> no broker <span class="keyword">in</span> the assigned replica list <span class="keyword">is</span> alive, it throws a NoReplicaOnlineException</div><div class="line">	&gt; <span class="number">5</span>. Replicas <span class="keyword">to</span> receive LeaderAndIsr request = live assigned replicas，Once the leader <span class="keyword">is</span> successfully registered <span class="keyword">in</span> zookeeper, it updates the allLeaders cache</div><div class="line">	</div><div class="line">	* ReassignedPartitionLeaderSelector</div><div class="line">	&gt; <span class="keyword">New</span> leader = a live <span class="keyword">in</span>-sync reassigned replica  </div><div class="line">	&gt; <span class="keyword">New</span> isr = current isr  </div><div class="line">	&gt; Replicas <span class="keyword">to</span> receive LeaderAndIsr request = reassigned replicas</div><div class="line">	</div><div class="line">	* PreferredReplicaPartitionLeaderSelector</div><div class="line">	&gt; <span class="keyword">New</span> leader = preferred (first assigned) replica (<span class="keyword">if</span> <span class="keyword">in</span> isr <span class="keyword">and</span> alive)    </div><div class="line">	&gt; <span class="keyword">New</span> isr = current isr  </div><div class="line">	&gt; Replicas <span class="keyword">to</span> receive LeaderAndIsr request = assigned replicas</div><div class="line">	</div><div class="line">	* ControlledShutdownLeaderSelector</div><div class="line">	&gt; <span class="keyword">New</span> leader = replica <span class="keyword">in</span> isr that<span class="symbol">'s</span> <span class="keyword">not</span> being shutdown  </div><div class="line">	&gt; <span class="keyword">New</span> isr = current isr - shutdown replica  </div><div class="line">	&gt; Replicas <span class="keyword">to</span> receive LeaderAndIsr request = live assigned replicas</div><div class="line"></div><div class="line"></div><div class="line">## Replica状态机</div><div class="line">- ReplicaState副本状态如下：</div><div class="line">	- NewReplica：当创建了topic或者重分配分区时Controller会创建新的副本，就处在这个状态，此状态中的副本只能接收“成为follower”的状态变更请求，可由NonExistentReplica转换而来</div><div class="line">	- OnlineReplica：一旦启动了一个副本以及该分区AR副本集合中的一部分，那么就将设置该副本状态为OnlineReplica。在此状态中的副本可以接收<span class="string">"成为leader"</span>或<span class="string">"成为follower"</span>的状态变更请求。可由NewRelica、OnlineReplica或OfflineReplica状态转换而来</div><div class="line">	- OfflineReplica：如果一个副本挂掉(保存该副本的broker宕机)将被置于OfflineReplica状态，可由NewReplica或OnlineReplica状态转换而来</div><div class="line">	- ReplicaDeletionStarted：开启副本删除操作时会将副本状态置于ReplicaDeletionStarted状态，可由OfflineReplica状态转换而来</div><div class="line">	- ReplicaDeletionSuccessful：如果副本删除请求成功，返回的响应没有错误的话，该副本会被置于ReplicaDeletionSuccessful状态，可由ReplicaDeletionStarted状态转换而来</div><div class="line">	- ReplicaDeletionIneligible：如果副本删除失败，将被置于ReplicaDeletionIneligible状态，可由ReplicaDeletionStarted状态转换而来</div><div class="line">	- NonExistentReplica：如果副本被成功删除将被置于NonExistentReplica状态，可由ReplicaDeletionSuccessful状态转换而来</div><div class="line"></div><div class="line">- 副本状态转换图</div><div class="line">![replica_state](http://oj5mvdqpa.bkt.clouddn.com/replica_state.png)  </div><div class="line"></div><div class="line">## 举例分析</div><div class="line"></div><div class="line">### 创建topic</div><div class="line"><span class="number">1</span>. 命令行逻辑</div></pre></td></tr></table></figure></topicpartition></p>
+<p>bin/kafka-topics.sh –zookeeper XXX:12181 –create –topic fanstop_messagecore –partitions 2 –replication-factor 3<br>a.确定分区副本的分配方案<br>0 –&gt; [2,1,3]<br>1 –&gt; [3,2,4]<br>b.创建Zk结点，将分配方案写到 /brokers/topics/fanstop_messagecore 结点下<br>    <figure class="highlight haxe"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="number">2.</span> Controller后台逻辑</div><div class="line"></div><div class="line">	- Controller启动时,分区状态机PartitionStateMachine.registerListeners()会注册一些监听器，当用命令行新增加了/brokers/topics/fanstop_messagecore结点后，就会触发监听器TopicChangeListener的handleChildChange方法，逻辑如下： </div><div class="line">	 <span class="number">1.</span> 获取/brokers/topics路径下集合，与当前controller中保存的topic集合比较，找出新增topic集合，比如fanstop_messagecore（新增or删除）</div><div class="line">	 <span class="number">2.</span> 更新controller的topic缓存列表</div><div class="line">	 <span class="number">3.</span> 从/brokers/topics/fanstop_messagecore结点取出这个topic所有分区的分配方案，更新controller对应的缓存信息</div><div class="line">	 <span class="number">4.</span> 调用KafkaController.onNewTopicCreation方法</div><div class="line">	- onNewTopicCreation</div><div class="line">	</div><div class="line">	```Scala</div><div class="line">	def onNewTopicCreation(topics: <span class="type">Set</span>[<span class="keyword">String</span>], <span class="keyword">new</span><span class="type">Partitions</span>: Set[TopicAndPartition]) &#123;</div><div class="line">	  info(<span class="string">"New topic creation callback for %s"</span>.format(<span class="keyword">new</span><span class="type">Partitions</span>.mkString(<span class="string">","</span>)))</div><div class="line">	  <span class="comment">// subscribe to partition changes</span></div><div class="line">	  topics.foreach(topic =&gt; partitionStateMachine.registerPartitionChangeListener(topic))</div><div class="line">	  onNewPartitionCreation(<span class="keyword">new</span><span class="type">Partitions</span>)  &#125;</div></pre></td></tr></table></figure></p>
+<pre><code>1. 为每一个topic注册/brokers/topics/[topic]/下的分区变更监听器PartitionModificationsListener，本次仅注册但不会触发
+2. 调用onNewPartitionCreation方法创建分区
+
+  - onNewPartitionCreation  
+</code></pre>  <figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">onNewPartitionCreation</span></span>(newPartitions: <span class="type">Set</span>[<span class="type">TopicAndPartition</span>]) &#123;</div><div class="line">	info(<span class="string">"New partition creation callback for %s"</span>.format(newPartitions.mkString(<span class="string">","</span>)))</div><div class="line">	partitionStateMachine.handleStateChanges(newPartitions, <span class="type">NewPartition</span>)</div><div class="line">	replicaStateMachine.handleStateChanges(controllerContext.replicasForPartition(newPartitions), <span class="type">NewReplica</span>)</div><div class="line">	partitionStateMachine.handleStateChanges(newPartitions, <span class="type">OnlinePartition</span>, offlinePartitionSelector)</div><div class="line">     	replicaStateMachine.handleStateChanges(controllerContext.replicasForPartition(newPartitions), <span class="type">OnlineReplica</span>) &#125;</div></pre></td></tr></table></figure>
+<pre><code>  1. 创建新增分区对象，分区状态机将新创建分区转变为NewPartition状态
+2. 从Controller缓存中取出新增分区的副本分配方案，针对每一个replica进行NonExistentReplica--&gt; NewReplica状态转换
+3. 分区状态 NewPartition--&gt;OnlinePartition，调用initializeLeaderAndIsrForPartition(topicAndPartition)为新分区初始化leader和isr路径。主要策略就是让AR中第一个replica作为leader，所有可用的replica作为ISR，将leader、ISR、leaderepoch、controllerepoch、zkversion等信息写入Zk state节点，ControllerContext更新相应topic分区的leader和ISR缓存。之后就是发送LeaderAndIsrRequest给每个replica和UpdateMetadataRequest请求给每个可用的broker
+  4. 设置副本状态机状态NewReplica---&gt;OnlineReplica，将当前的replica加入到controllerContext AR缓存中。完事......
+</code></pre><h3 id="Broker-Failure"><a href="#Broker-Failure" class="headerlink" title="Broker Failure"></a>Broker Failure</h3><p>下面来分析一下某台broker宕机的情况。</p>
+<ol>
+<li>broker宕机后，zk会话超时，/brokers/ids对应结点被删除，触发BrokerChangeListener.handleChildChange，接着又调用controller.onBrokerFailure方法，</li>
+<li>对Leader副本在deadBroker上的分区（同时要排除topic在删除的状态）触发OfflinePartition状态转换</li>
+<li>这一步就是为处于OfflinePartition状态的分区触发OnlinePartition状态转换，ok，还记得上面提到的OfflinePartitionLeaderSelector选举器吧，这回就用它来进行Leader选举、ISR重分配，以及选出接收LeaderAndIsr请求的replica。更新一下Zk state结点的leader和ISR相关信息，更新controllerContext的leader缓存，给相应broker发送LeaderAndIsrRequest请求，顺带发送UpdateMetadataRequest请求，这些动作都是在electLeaderForPartition函数中完成</li>
+<li>找出deadBroker上的所有副本，并且要过滤掉一些topics正在执行删除操作的replica，副本状态机执行OfflineRelica状态转换，过程不再赘述</li>
+<li>check出正在执行topic删除期间的replica，将这些replica置为ReplicaDeletionIneligible，这些replica在broker down的时候是不能被删除的。</li>
+</ol>
+<h3 id="分区副本重新分配策略"><a href="#分区副本重新分配策略" class="headerlink" title="分区副本重新分配策略"></a>分区副本重新分配策略</h3><p>Kafka提供了分区重新分配的工具，在生产环境下，随着负载的增大，可能需要给Kafka集群扩容，但是对于已存在的topic，并不会自动将分区的副本迁移到新的Broker上，就可以用到这个工具。除此之外，我们还可以用这个工具来调整分区的AR数量，下面就来说一下Partition方案重新分配的情况，也涉及Controller非常重要的一个方法：onPartitionReassignment。当用命令行发起分区重分配操作时，它会在/admin/reassign_partitions路径下创建节点，进而触发PartitionsReassignedListener监听器，执行handleDataChange函数，过滤掉正在执行重分配的副本的分区，接着判断它们的topic是否正在进行删除，构造一个ReassignedPartitionsContext传递给controller.initiateReassignReplicasForTopicPartition为给定topic分区重新分配副本，这个函数的逻辑看了下源码，基本流程如下：</p>
+<ol>
+<li>取出controllerContext针对这个分区的AR缓存，当前AR和RAR集合完全一样的的话，抛异常，不用重分配了</li>
+<li>否则，判断一下RAR中是否存在不可用的副本，如果存在replica not alive，抛异常，此次重分配操作无法进行</li>
+<li>如果RAR中均可用，注册Zk state结点的listen，监听ISR变化，mark一下该topic不能被删除。</li>
+<li>最后一步调用最重要的函数onPartitionReassignment开始重新分配分区的副本  </li>
+</ol>
+<h4 id="onPartitionReassignment"><a href="#onPartitionReassignment" class="headerlink" title="onPartitionReassignment"></a>onPartitionReassignment</h4><p>这里我们还是以源码中的例子来说明整个流程:<br>OAR = {1,2,3}<br>RAR = (4,5,6)</p>
+<p><img src="http://oj5mvdqpa.bkt.clouddn.com/PartitionReassignment.png" alt="PartitionReassignment"></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">AR(Zk)</th>
+<th style="text-align:center">leader/isr(Zk)</th>
+<th style="text-align:center">transition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">{1,2,3}</td>
+<td style="text-align:center">1/{1,2,3}</td>
+<td style="text-align:center">(initial state)</td>
+</tr>
+<tr>
+<td style="text-align:center">{1,2,3,4,5,6}</td>
+<td style="text-align:center">1/{1,2,3}</td>
+<td style="text-align:center">(step 2)</td>
+</tr>
+<tr>
+<td style="text-align:center">{1,2,3,4,5,6}</td>
+<td style="text-align:center">1/{1,2,3,4,5,6}</td>
+<td style="text-align:center">(step 4)</td>
+</tr>
+<tr>
+<td style="text-align:center">{1,2,3,4,5,6}</td>
+<td style="text-align:center">4/{1,2,3,4,5,6}</td>
+<td style="text-align:center">(step 7)</td>
+</tr>
+<tr>
+<td style="text-align:center">{1,2,3,4,5,6}</td>
+<td style="text-align:center">4/{4,5,6}</td>
+<td style="text-align:center">(step 8)</td>
+</tr>
+<tr>
+<td style="text-align:center">{4,5,6}</td>
+<td style="text-align:center">4/{4,5,6}</td>
+<td style="text-align:center">(step 10)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文只举了三个经典的例子，后面再慢慢扩充用到Controller的实例分析吧。对于之前连Scala语法都没接触过的老王来说，整个调研学习过程真可谓折磨蛋疼额，技术无止境，共勉吧。However，还是希望本文能对读者有所帮助。</p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
+<li><a href="https://cwiki.apache.org/confluence/display/KAFKA/Kafka+Controller+Internals" target="_blank" rel="external">官方wiki：Kafka Controller Internals</a>  </li>
+<li><a href="http://www.cnblogs.com/huxi2b/tag/Kafka/" target="_blank" rel="external">推荐Kafka相关博客</a></li>
+<li><a href="http://blog.csdn.net/c395318621/article/category/6435653" target="_blank" rel="external">Kafka Controller源码分析</a></li>
+</ol>
 
       
 
@@ -189,15 +291,7 @@
 		<ul class="article-tag-list">
 			 
         <li class="article-tag-list-item">
-        	<a href="javascript:void(0)" class="article-tag-list-link color5">java</a>
-        </li>
-       
-        <li class="article-tag-list-item">
-        	<a href="javascript:void(0)" class="article-tag-list-link color2">python</a>
-        </li>
-       
-        <li class="article-tag-list-item">
-        	<a href="javascript:void(0)" class="article-tag-list-link color3">bigdata</a>
+        	<a href="javascript:void(0)" class="article-tag-list-link color2">Kafka Controller,源码分析</a>
         </li>
       
 		</ul>
@@ -207,7 +301,93 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2017/01/02/hello-world/">展开全文 >></a>
+          <a class="article-more-a" href="/2017/01/13/Kafka-Controller/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-Kafka-Coordinate" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Kafka-Coordinate"><a href="#Kafka-Coordinate" class="headerlink" title="Kafka Coordinate"></a>Kafka Coordinate</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>好吧，上一回说到Kafka Controller</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/01/13/Kafka-Coordinate/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-test-post" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/01/03/test-post/">test_post</a>
+    </h1>
+  
+
+        
+        <a href="/2017/01/03/test-post/" class="archive-article-date">
+  	<time datetime="2017-01-03T06:24:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-01-03</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="This-is-Test"><a href="#This-is-Test" class="headerlink" title="This is Test"></a>This is Test</h1>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/01/03/test-post/">展开全文 >></a>
         </p>
       
 
@@ -321,15 +501,7 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="color5">java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="color2">python</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="color3">bigdata</a>
+                <a href="javascript:void(0)" class="color2">Kafka Controller,源码分析</a>
               </li>
             
             <div class="clearfix"></div>
