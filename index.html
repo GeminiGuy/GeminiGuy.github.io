@@ -84,12 +84,15 @@
 
 
 
+<meta name="description" content="嘘，要发车了">
 <meta property="og:type" content="website">
 <meta property="og:title" content="隔壁老王的Blog">
 <meta property="og:url" content="https://geminiguy.github.io/index.html">
 <meta property="og:site_name" content="隔壁老王的Blog">
+<meta property="og:description" content="嘘，要发车了">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="隔壁老王的Blog">
+<meta name="twitter:description" content="嘘，要发车了">
 
 
 
@@ -97,11 +100,11 @@
   var NexT = window.NexT || {};
   var CONFIG = {
     scheme: 'Mist',
-    sidebar: {"position":"left","display":"post"},
+    sidebar: {"position":"right","display":"post"},
     fancybox: true,
     motion: true,
     duoshuo: {
-      userId: 0,
+      userId: 6371023569551361000,
       author: '博主'
     }
   };
@@ -118,6 +121,15 @@
 
 
 
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=60402835";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
 
 
 
@@ -128,7 +140,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left 
+  <div class="container one-collumn sidebar-position-right 
    page-home 
  ">
     <div class="headband"></div>
@@ -168,6 +180,16 @@
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
             首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
           </a>
         </li>
       
@@ -230,8 +252,8 @@
             
               
                 
-                <a class="post-title-link" href="/2017/01/14/new/" itemprop="url">
-                  new
+                <a class="post-title-link" href="/2017/01/13/Kafka-Controller/" itemprop="url">
+                  Kafka Controller
                 </a>
               
             
@@ -244,14 +266,40 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-01-14T13:10:13+08:00" content="2017-01-14">
-              2017-01-14
+            <time itemprop="dateCreated" datetime="2017-01-13T00:00:00+08:00" content="2017-01-13">
+              2017-01-13
             </time>
           </span>
 
           
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
 
           
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/01/13/Kafka-Controller/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/13/Kafka-Controller/" itemprop="commentsCount"></span>
+                </a>
+              </span>
             
           
 
@@ -273,9 +321,12 @@
 
       
         
-          
-            
-          
+          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>目前网上针对Kafka Controller的分析文章不算少，但是大多比较散乱，不够系统，因此趁着这次部门分享Kafka的机会，将一些知识点进行了梳理总结，学习过程中参考了一些原理性的分析文章和0.10版本的源码。本文埋了一些细节坑，待有时间再回来补全吧。对于Kafka的研究水平有限，如果文章中出现错误，还望在评论区交流指正，谢谢。下面我们首先从基础概念开始讲起。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2017/01/13/Kafka-Controller/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -323,8 +374,8 @@
             
               
                 
-                <a class="post-title-link" href="/2017/01/14/index/" itemprop="url">
-                  index
+                <a class="post-title-link" href="/2017/01/01/index/" itemprop="url">
+                  Hello World
                 </a>
               
             
@@ -337,14 +388,40 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-01-14T12:58:03+08:00" content="2017-01-14">
-              2017-01-14
+            <time itemprop="dateCreated" datetime="2017-01-01T00:00:00+08:00" content="2017-01-01">
+              2017-01-01
             </time>
           </span>
 
           
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/闲聊/" itemprop="url" rel="index">
+                    <span itemprop="name">闲聊</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
 
           
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/01/01/index/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/01/index/" itemprop="commentsCount"></span>
+                </a>
+              </span>
             
           
 
@@ -367,7 +444,8 @@
       
         
           
-            
+            <p>Hello world，隔壁老王<br>新的一年博客开张<br>个人比较懒，平时知识点也只是随手记录在印象笔记<br>希望这一年能多写一些技术文章吧<br>Whatever，新年快乐<br>Ps：Hexo的环境配置真是好多坑啊，还是比较喜欢NexT这个主题</p>
+
           
         
       
@@ -428,10 +506,10 @@
       <section class="site-overview sidebar-panel  sidebar-panel-active ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
-               src="/images/avatar.gif"
-               alt="Lixing" />
-          <p class="site-author-name" itemprop="name">Lixing</p>
-          <p class="site-description motion-element" itemprop="description"></p>
+               src="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg"
+               alt="Gemini" />
+          <p class="site-author-name" itemprop="name">Gemini</p>
+          <p class="site-description motion-element" itemprop="description">嘘，要发车了</p>
         </div>
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
@@ -442,7 +520,21 @@
           </div>
 
           
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
 
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
           
 
         </nav>
@@ -450,6 +542,26 @@
         
 
         <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/GeminiGuy" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2509862211/" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
           
         </div>
 
@@ -480,7 +592,7 @@
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">Lixing</span>
+  <span class="author" itemprop="copyrightHolder">Gemini</span>
 </div>
 
 <div class="powered-by">
@@ -567,9 +679,32 @@
 
   
 
+  
+    
+  
 
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"geminiguy"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
 
   
+    
+      
+      <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js"></script>
+    
+  
+
+
 
 
 
