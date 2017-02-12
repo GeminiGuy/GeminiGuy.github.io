@@ -1,0 +1,730 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Kestrel,memcache,libevent,分布式消息," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="概述　　Kestrel是一个利用Scala语言编写的轻量级消息队列，由Twitter团队开源，其支持三种协议：memcache、thrift、text。Kestrel具有高性能、代码轻量级、持久存储（记录读写日志到journal）、可靠性（支持可靠获取）等优点。而本文所要说的Ckestrel是Kestrel的C++版本，由团队的老前辈改版而成，采用的协议是memcached文本协议。由于吞吐量、稳">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ckestrel框架浅析">
+<meta property="og:url" content="https://geminiguy.github.io/2017/02/12/ckestrel框架浅析/index.html">
+<meta property="og:site_name" content="隔壁老王的Blog">
+<meta property="og:description" content="概述　　Kestrel是一个利用Scala语言编写的轻量级消息队列，由Twitter团队开源，其支持三种协议：memcache、thrift、text。Kestrel具有高性能、代码轻量级、持久存储（记录读写日志到journal）、可靠性（支持可靠获取）等优点。而本文所要说的Ckestrel是Kestrel的C++版本，由团队的老前辈改版而成，采用的协议是memcached文本协议。由于吞吐量、稳">
+<meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/kestrel.jpg">
+<meta property="og:updated_time" content="2017-02-12T07:40:58.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Ckestrel框架浅析">
+<meta name="twitter:description" content="概述　　Kestrel是一个利用Scala语言编写的轻量级消息队列，由Twitter团队开源，其支持三种协议：memcache、thrift、text。Kestrel具有高性能、代码轻量级、持久存储（记录读写日志到journal）、可靠性（支持可靠获取）等优点。而本文所要说的Ckestrel是Kestrel的C++版本，由团队的老前辈改版而成，采用的协议是memcached文本协议。由于吞吐量、稳">
+<meta name="twitter:image" content="http://ol7f62vwl.bkt.clouddn.com/kestrel.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6371023569551361000,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> Ckestrel框架浅析 | 隔壁老王的Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=60402835";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">隔壁老王的Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Ckestrel框架浅析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-02-12T00:00:00+08:00" content="2017-02-12">
+              2017-02-12
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/02/12/ckestrel框架浅析/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/02/12/ckestrel框架浅析/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>　　Kestrel是一个利用Scala语言编写的轻量级消息队列，由Twitter团队开源，其支持三种协议：memcache、thrift、text。Kestrel具有高性能、代码轻量级、持久存储（记录读写日志到journal）、可靠性（支持可靠获取）等优点。而本文所要说的Ckestrel是Kestrel的C++版本，由团队的老前辈改版而成，采用的协议是memcached文本协议。由于吞吐量、稳定性、代码维护性等等原因满足不了业务需求，因此逐步会被Kafka取而代之。这篇文章是我15年刚入职那会调研学习这个框架的源码所写的wiki，现照搬到我的博客上面。本文将对Ckestrel的线程模型及状态机、持久化日志和可靠性读取机制等方面做相关分析。<br><a id="more"></a></p>
+<h1 id="CKestrel线程模型及状态机"><a href="#CKestrel线程模型及状态机" class="headerlink" title="CKestrel线程模型及状态机"></a>CKestrel线程模型及状态机</h1><h2 id="线程模型"><a href="#线程模型" class="headerlink" title="线程模型"></a>线程模型</h2><p>　　Ckestrel采用了memcached的线程模型来处理网络连接，而memcached使用libevent实现异步服务器，采用主线程和worker线程，主线程负责监听网络连接，并且accept连接。当监听到连接时，accept连接成功后，把相应的client fd丢给其中一个worker线程。worker线程接收主线程丢过来的client fd，加入到自己的epoll监听队列，负责处理该连接的读写事件。memcached的线程模型图如下所示：<br>　　<img src="http://ol7f62vwl.bkt.clouddn.com/kestrel.jpg" alt="kestrel"></p>
+<ol>
+<li>主线程通过evnet_init()为自己分配一个event_base，用于监听连接，即listen fd。</li>
+<li>主线程创建n个worker线程，同时每个worker线程也分配了独立的event_base。每个worker线程通过管道方式与主线程进行通信，调用pipe函数，产生两个fd，一个是管道写入fd（notify_send_fd），一个是管道读取fd（notify_receive_fd）。worker线程把管道读取fd（notify_receive_fd）加到自己的event_base，监听管道读取fd的可读事件，即当主线程往某个线程的管道写入fd写数据时，触发事件。</li>
+<li>主线程监听到有一个连接到达时，accept连接，产生一个client fd，然后选择一个worker线程，把这个client fd包装成一个CQ_ITEM对象（其中不仅有client fd参数，还包括init_state、event_flags、read_buffer_size等参数）然后压到worker线程的CQ_ITEM队列里面去（每个worker线程有一个CQ_ITEM队列），同时主线程往选中的worker线程的管道写入fd中写入一个字符“c”（Ckestrel中写入””，用来触发worker线程）。</li>
+<li>某个worker线程监听到自己的管道读取fd可读，触发事件处理函数thread_libevent_process，从CQ_ITEM队列中取出CQ_ITEM对象，调用conn_new函数把此client fd加入到自己的event_base中，从此负责该连接的读写工作。</li>
+</ol>
+<h2 id="状态机"><a href="#状态机" class="headerlink" title="状态机"></a>状态机</h2><p>　　主线程和worker线程都调用conn_new函数进行事件监听，有事件发生时调用event_handler函数，最终执行driver_machine函数。状态机drive_machine函数是worker线程处理网络请求业务的逻辑核心。while循环中包含switch case，根据连接对象conn的当前连接状态state进入不同的case，每个case可能会改变conn对象的连接状态，进而被分发到合适的case上进行处理，最终由stop=true的case分支退出while循环。详细的解析请参考<a href="http://calixwu.com/2014/11/memcached-yuanmafenxi-qingqiuchuli-zhuangtaiji.html" target="_blank" rel="external">Memcached源码分析之请求处理</a>。
+　　</p>
+<h1 id="Ckestrel持久化日志"><a href="#Ckestrel持久化日志" class="headerlink" title="Ckestrel持久化日志"></a>Ckestrel持久化日志</h1><p>　　Ckestrel日志文件是唯一在硬盘存储队列内容的方式，日志文件中顺序记录每个针对相应队列的添加和删除操作。每种操作有对应的flag来记录日志类型，flag总共有以下几种：CMD_ADD、CMD_ADDX、CMD_ADD_XID、CMD_REMOVE、CMD_REMOVE_TENTATIVE、CMD_SAVE_XID、CMD_UNREMOVE、CMD_CONFIRM_REMOVE。其中CMD_ADDX和CMD_ADD<em>XID操作会利用自定义的pack压缩方式将某条队列消息的length</em>、xid<em>、addTime</em>、expiry<em>、data</em>等信息写入日志文件中。Ckestrel服务器启动时，对每个队列的日志文件执行replayJournal操作，重新建立内存中的队列以便客户端访问。这种方式保证了即使服务器崩溃，也能根据每个队列的日志文件重建内存中的队列消息。<br>　　Ckestrel框架在对journal处理上与目前scala 2.4.1版本上有些区别。Journal.cc中实现了roll机制对日志文件进行压缩。在PersistentQueue.cc中的add方法中：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (keepJournal_ &amp;&amp; !journal_-&gt;inReadBehind()) &#123;</div><div class="line">     <span class="keyword">if</span> (journal_-&gt;size() &gt; maxJournalSize_ * maxJournalOverflow_ &amp;&amp; queueSize_ &lt; maxJournalSize_) &#123;</div><div class="line">         slog_write(LL_NOTICE, <span class="string">"Rolling journal file for '%s' (qsize=%d)"</span>, name_.c_str(), queueSize_);</div><div class="line">         <span class="built_in">deque</span>&lt;QItem *&gt; q = openTransactionQItems();</div><div class="line">         journal_-&gt;roll(xidCounter_, q, queue_);</div><div class="line">     &#125;</div><div class="line">     <span class="keyword">if</span> (queueSize_ &gt;= maxMemorySize_) &#123;</div><div class="line">         slog_write(LL_NOTICE, <span class="string">"Dropping to read-behind for queue '%s' (%lu bytes)"</span>, name_.c_str(), queueSize_);</div><div class="line">         journal_-&gt;startReadBehind();</div><div class="line">     &#125;</div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<ol>
+<li>利用kestrel.conf配置文件设置 maxJournalSize<em> = 16M，maxJournalOverflow</em> = 10，maxMemorySize<em> = 128M。初始向队列写入数据时，journal</em>不会进入ReadBehind模式。当日志文件大小大于maxJournalSize<em> * maxJournalOverflow</em>并且队列大小小于maxJournalSize<em>时，journal</em>进行roll操作，重新建立日志文件，将内存中的队列消息add进journal_日志中，其中利用pack编码方式，opcode=CMD_ADDX。同样将openTransactionQItems中未完成的事务记录在对应日志当中。</li>
+<li>当队列大小大于等于maxMemorySize_时，启动ReadBehind模式，后面写入队列的消息将会存储在日志文件中，每当从内存中remove掉消息的时都会尝试从日志文件中读取相关队列消息再push<em>back到内存队列中，这种状态一直持续到reader</em>和writer_指针重合，即在ReadBehind模式下add进日志文件的消息均被处理完毕，退出ReadBehind模式。</li>
+<li>另外在PersistentQueue.cc中remove方法中，当if (queueLength<em> == 0 &amp;&amp; journal</em> -&gt;size() &gt;= maxJournalSize_)时，也会对日志文件进行roll操作。</li>
+</ol>
+<h1 id="可靠性读取"><a href="#可靠性读取" class="headerlink" title="可靠性读取"></a>可靠性读取</h1><p>　　默认的GET并没有加入可靠性读取选项，从队列中获取消息后，server端就将该消息从队列中移除，如果客户端在处理这个消息的时候异常崩溃或者在接收消息时连接断开，则该条队列数据就会永久丢失，而之前出现的RIN数据丢失问题则出现在这里。这种默认的方式是不安全的，因此Kestrel提供了可靠性读取机制，在GET命令中加入/open和/close选项。官方文档对/open和/close的描述如下：</p>
+<blockquote>
+<p><strong>/open</strong><br>Tentatively remove an item from the queue. The item is returned as usual but is also set aside in case the client disappears before sending a “close” request.</p>
+<p><strong>/close</strong><br>Close any existing open read.</p>
+</blockquote>
+<p>　　当在消费机客户端GET命令中使用/open时，kestrel服务器将这个消息从队列暂时移除并正常发送给消费机客户端，同时在openTransactions<em>这个map容器中备份该队列数据，如果这时候客户端崩溃或者断开连接，从openTransactions</em>中根据xid键取出该队列数据，重新放入内存队列头部，因此当客户端重新连接后就可以获取到该队列消息。每个连接的client只能有一个正在执行的可靠获取，再次发送带有/open选项的GET命令server返回空（同一个连接直接发送GET命令也会返回空）。当消费机客户端收到该队列数据时，再次发送带/close选项的GET命令，server将会confirmRemove该队列数据，从openTransactions_容器中删除这条队列数据，并在日志文件中记录CMD_CONFIRM_REMOVE。<br>　　具体分析发送完带/open选项的GET命令后，消费机与队列机服务器断开连接，则进入Ckestrel.cc中的conn_close函数，执行qc-&gt;unremove操作。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">conn_close</span><span class="params">(conn *c)</span></span>&#123;</div><div class="line">    <span class="keyword">if</span> (c-&gt;xid) &#123;</div><div class="line">        <span class="keyword">if</span> (qc-&gt;unremove(<span class="built_in">std</span>::<span class="built_in">string</span>(c-&gt;xkey, c-&gt;xnkey), c-&gt;xid) == <span class="literal">false</span>) &#123;</div><div class="line">            slog_write(LL_WARNING, <span class="string">"Unremove non-existent transaction"</span>);</div><div class="line">        &#125;</div><div class="line">        c-&gt;xid = <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>　　最终进入PersistentQueue.cc的doUnremove函数，在openTransactions_容器中根据上一条队列消息的xid找到该item，再push<em>front到内存队列头部，在openTransactions</em>容器中删除该队列消息。客户端重新连接到服务器后，就可以从服务器内存队列中取到该条队列消息，这就是kestrel的可靠读取机制的实现。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">bool</span> PersistentQueue::doUnremove(<span class="keyword">int</span> xid) &#123;</div><div class="line">    <span class="built_in">map</span>&lt;<span class="keyword">int</span>, QItem*&gt;::iterator it = openTransactions_.find(xid);</div><div class="line">    <span class="keyword">if</span> (it != openTransactions_.end()) &#123;</div><div class="line">        queueLength_ += <span class="number">1</span>;</div><div class="line">        queueSize_ += it-&gt;second-&gt;getLength();</div><div class="line">        queue_.push_front(it-&gt;second);</div><div class="line">        memoryBytes_ += it-&gt;second-&gt;getLength();</div><div class="line">        openTransactions_.erase(it);</div><div class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</div><div class="line">    &#125;</div><div class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>　　本文从Kestrel的线程模型、状态机、持久化日志、可靠性读取四个方面进行了简单的分析。虽然Kestrel已成为历史，但是其中memcached网络模型、libevent异步事件处理库等知识点还是很值得去学习和思考的。另推荐一篇对memcached源码分析写的非常不错的系列博客。<a href="http://calixwu.com/2014/11/memcached-yuanmafenxi.html" target="_blank" rel="external">Memcached源码分析</a>
+　　</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>为后厂村的码农赏点酒钱吧</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="http://oj5mvdqpa.bkt.clouddn.com/weixin-pay.png" alt="Gemini WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="http://oj5mvdqpa.bkt.clouddn.com/zhifubao-pay.png" alt="Gemini Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Kestrel/" rel="tag">#Kestrel</a>
+          
+            <a href="/tags/memcache/" rel="tag">#memcache</a>
+          
+            <a href="/tags/libevent/" rel="tag">#libevent</a>
+          
+            <a href="/tags/分布式消息/" rel="tag">#分布式消息</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/05/2016-movie/" rel="next" title="我眼中的2016年电影之最">
+                <i class="fa fa-chevron-left"></i> 我眼中的2016年电影之最
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2017/02/12/ckestrel框架浅析/"
+     data-title="Ckestrel框架浅析"
+     data-content=""
+     data-url="https://geminiguy.github.io/2017/02/12/ckestrel框架浅析/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/02/12/ckestrel框架浅析/"
+           data-title="Ckestrel框架浅析" data-url="https://geminiguy.github.io/2017/02/12/ckestrel框架浅析/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg"
+               alt="Gemini" />
+          <p class="site-author-name" itemprop="name">Gemini</p>
+          <p class="site-description motion-element" itemprop="description">嘘，要发车了</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/GeminiGuy" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2509862211/" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:rockere6@163.com" target="_blank" title="Email">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>
+                  
+                  Email
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CKestrel线程模型及状态机"><span class="nav-number">2.</span> <span class="nav-text">CKestrel线程模型及状态机</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#线程模型"><span class="nav-number">2.1.</span> <span class="nav-text">线程模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#状态机"><span class="nav-number">2.2.</span> <span class="nav-text">状态机</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Ckestrel持久化日志"><span class="nav-number">3.</span> <span class="nav-text">Ckestrel持久化日志</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#可靠性读取"><span class="nav-number">4.</span> <span class="nav-text">可靠性读取</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Gemini</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"geminiguy"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js"></script>
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>
