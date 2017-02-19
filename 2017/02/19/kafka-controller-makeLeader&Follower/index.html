@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="闲聊,美食," />
+  <meta name="keywords" content="Kafka Controller," />
 
 
 
@@ -84,21 +84,25 @@
 
 
 
-<meta name="description" content="杂记壹　　回顾这一周，好像都在应付各种小项目开发，粉条2017年改版大项目启动，设计评审会加各种对接口格式又是两天的时间。用来学习基础jvm知识的时间大大被压榨，买的《人类简史》和《未来简史》也沉睡了好几天。However，最重要的是，我的锅也沉睡许久，是时候唤醒它了~~　　之前设想的是每周都学做一道新菜，不仅是因为我司食堂太难吃，也是让自己的码农生活不要过得太屌丝吧，多一些正能量，或许就成了程序">
+<meta name="description" content="序言
+阳光明美日，正是填坑时
+
+　　之前有一篇Kafka Controller的文章中，对于RelicaManager的makeLeaders、makeFollowers方法具体实现逻辑留了一个坑，时隔好久，回来把这个坑补上，其中参考了0.10版本的scala源码以及两篇博客，最后参考文献中会有注明。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="周六杂记—壹贰叁">
-<meta property="og:url" content="https://geminiguy.github.io/2017/02/18/Note-20170218/index.html">
+<meta property="og:title" content="Kafka Controller填坑">
+<meta property="og:url" content="https://geminiguy.github.io/2017/02/19/kafka-controller-makeLeader&Follower/index.html">
 <meta property="og:site_name" content="隔壁老王的Blog">
-<meta property="og:description" content="杂记壹　　回顾这一周，好像都在应付各种小项目开发，粉条2017年改版大项目启动，设计评审会加各种对接口格式又是两天的时间。用来学习基础jvm知识的时间大大被压榨，买的《人类简史》和《未来简史》也沉睡了好几天。However，最重要的是，我的锅也沉睡许久，是时候唤醒它了~~　　之前设想的是每周都学做一道新菜，不仅是因为我司食堂太难吃，也是让自己的码农生活不要过得太屌丝吧，多一些正能量，或许就成了程序">
-<meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/早晨的菜.jpg">
-<meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/辣子鸡.jpg">
-<meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/锅.jpg">
-<meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/加长林肯.jpg">
-<meta property="og:updated_time" content="2017-02-18T16:14:51.000Z">
+<meta property="og:description" content="序言
+阳光明美日，正是填坑时
+
+　　之前有一篇Kafka Controller的文章中，对于RelicaManager的makeLeaders、makeFollowers方法具体实现逻辑留了一个坑，时隔好久，回来把这个坑补上，其中参考了0.10版本的scala源码以及两篇博客，最后参考文献中会有注明。">
+<meta property="og:updated_time" content="2017-02-19T08:54:06.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="周六杂记—壹贰叁">
-<meta name="twitter:description" content="杂记壹　　回顾这一周，好像都在应付各种小项目开发，粉条2017年改版大项目启动，设计评审会加各种对接口格式又是两天的时间。用来学习基础jvm知识的时间大大被压榨，买的《人类简史》和《未来简史》也沉睡了好几天。However，最重要的是，我的锅也沉睡许久，是时候唤醒它了~~　　之前设想的是每周都学做一道新菜，不仅是因为我司食堂太难吃，也是让自己的码农生活不要过得太屌丝吧，多一些正能量，或许就成了程序">
-<meta name="twitter:image" content="http://ol7f62vwl.bkt.clouddn.com/早晨的菜.jpg">
+<meta name="twitter:title" content="Kafka Controller填坑">
+<meta name="twitter:description" content="序言
+阳光明美日，正是填坑时
+
+　　之前有一篇Kafka Controller的文章中，对于RelicaManager的makeLeaders、makeFollowers方法具体实现逻辑留了一个坑，时隔好久，回来把这个坑补上，其中参考了0.10版本的scala源码以及两篇博客，最后参考文献中会有注明。">
 
 
 
@@ -116,7 +120,7 @@
   };
 </script>
 
-  <title> 周六杂记—壹贰叁 | 隔壁老王的Blog </title>
+  <title> Kafka Controller填坑 | 隔壁老王的Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -255,7 +259,7 @@
             
             
               
-                周六杂记—壹贰叁
+                Kafka Controller填坑
               
             
           </h1>
@@ -267,8 +271,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-02-18T00:00:00+08:00" content="2017-02-18">
-              2017-02-18
+            <time itemprop="dateCreated" datetime="2017-02-19T00:00:00+08:00" content="2017-02-19">
+              2017-02-19
             </time>
           </span>
 
@@ -281,8 +285,8 @@
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/闲聊/" itemprop="url" rel="index">
-                    <span itemprop="name">闲聊</span>
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
                   </a>
                 </span>
 
@@ -297,8 +301,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2017/02/18/Note-20170218/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/02/18/Note-20170218/" itemprop="commentsCount"></span>
+                <a href="/2017/02/19/kafka-controller-makeLeader&Follower/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/02/19/kafka-controller-makeLeader&Follower/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -321,28 +325,36 @@
       
 
       
-        <h1 id="杂记壹"><a href="#杂记壹" class="headerlink" title="杂记壹"></a>杂记壹</h1><p>　　回顾这一周，好像都在应付各种小项目开发，粉条2017年改版大项目启动，设计评审会加各种对接口格式又是两天的时间。用来学习基础jvm知识的时间大大被压榨，买的《人类简史》和《未来简史》也沉睡了好几天。However，最重要的是，我的锅也沉睡许久，是时候唤醒它了~~<br>　　之前设想的是每周都学做一道新菜，不仅是因为我司食堂太难吃，也是让自己的码农生活不要过得太屌丝吧，多一些正能量，或许就成了程序猿界的“厨神”了呢？😁周六早上反而睡不久了，于是乎起床买菜，在超市里看到了新鲜的湿面，这是个悲剧的前戏……</p>
-<a id="more"></a>
-<p><img src="http://ol7f62vwl.bkt.clouddn.com/早晨的菜.jpg" alt="早晨的菜"></p>
-<blockquote>
-<p>人生不只有苟且的工作，还有眼前的凉拌花生米和辣子鸡</p>
+        <h1 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h1><blockquote>
+<p>阳光明美日，正是填坑时</p>
 </blockquote>
-<p><img src="http://ol7f62vwl.bkt.clouddn.com/辣子鸡.jpg" alt="辣子鸡"></p>
-<h1 id="杂记贰"><a href="#杂记贰" class="headerlink" title="杂记贰"></a>杂记贰</h1><p>　　下午看了会《未来简史》，睡了一觉醒来六点多了。晚饭吃点啥呢？凉拌花生米没有吃完，干脆下早上买的湿面吧，悲剧开始了……</p>
-<p><img src="http://ol7f62vwl.bkt.clouddn.com/锅.jpg" alt="锅"></p>
-<blockquote>
-<p>内心OS：好想拿刀砍了这湿面</p>
-</blockquote>
-<h1 id="杂记叁"><a href="#杂记叁" class="headerlink" title="杂记叁"></a>杂记叁</h1><p>　　晚上一个也住在附近的师弟要过来找我谈心，我的煮面小奶锅毁了，我也要出去散散心，😶，出去溜了一圈，果然有收获，见图。</p>
-<p><img src="http://ol7f62vwl.bkt.clouddn.com/加长林肯.jpg" alt="加长林肯"></p>
-<blockquote>
-<p>一辆废弃的加长林肯，孤独的守候在五环外的马路边，“辽”字车牌隐约可见。这位东北大哥曾经的辉煌，你读懂了吗？</p>
-</blockquote>
-<h1 id="杂记终"><a href="#杂记终" class="headerlink" title="杂记终"></a>杂记终</h1><p>最后以《乘风破浪》里的一句经典台词作为这篇毫无逻辑的杂记文章的结尾吧。</p>
-<blockquote>
-<p>我的梦想，歌舞厅里只唱歌，桑拿馆里就洗澡！</p>
-</blockquote>
-<p>还有一首非常好听的歌曲推荐，<a href="http://music.163.com/#/song?id=4332303" target="_blank" rel="external">500 Miles</a>，晚安，好梦~~</p>
+<p>　　之前有一篇Kafka Controller的文章中，对于RelicaManager的makeLeaders、makeFollowers方法具体实现逻辑留了一个坑，时隔好久，回来把这个坑补上，其中参考了0.10版本的scala源码以及两篇博客，最后参考文献中会有注明。<br><a id="more"></a></p>
+<h1 id="ReplicaManager-makeLeaders"><a href="#ReplicaManager-makeLeaders" class="headerlink" title="ReplicaManager.makeLeaders"></a>ReplicaManager.makeLeaders</h1><ol>
+<li>首先对于接收到makeLeaders请求的broker来说，对于每一个本地的replica将成为leader的partition，移除该partition的Fetcher，因为如果本地replica不再是follower，就不需要从leader拉取消息了。</li>
+<li>对每个partition调用partition.makeLeader方法：<ul>
+<li>更新allReplica列表，对于新增的replica要创建log、 初始化highWater等等。对于当前分配的replica不在allReplicas中，则需要从assignedReplicas中删除。</li>
+<li>更新Partition对象的ISR，controllerEpoch，leaderEpoch，zkVersion等信息。</li>
+<li>如果本地replica之前不是leader，成为了leader，需要更新leader replica的highWater。</li>
+<li>把所有remote replica的leo重置了成UnknownOffsetMetadata（-1），在maybeIncrementLeaderHW中会取所有replica中最小的leo，如果除leader外有其他replica，因为刚被重置过，最小leo一定是-1，-1一定小于当前的hw，所以hw其实不会被increment。只有当isr中只有leader时，那hw会被increment到leader.leo。</li>
+</ul>
+</li>
+</ol>
+<h1 id="ReplicaManager-makeFollowers"><a href="#ReplicaManager-makeFollowers" class="headerlink" title="ReplicaManager.makeFollowers"></a>ReplicaManager.makeFollowers</h1><ol>
+<li>针对本地每一个replica将成为follower的分区，调用partition.makeFollower方法。<ul>
+<li>partition.makeFollower中，更新partition的controllerEpoch、ISR（初始化为空）、leaderEpoch、zkVersion等信息。</li>
+<li>更新allReplica列表，对于新增的replica要创建log、 初始化highWater等等。对于当前分配的replica不在allReplicas中，则需要从assignedReplicas中删除。</li>
+<li>如果partition的leader发生变化，返回true，partition加入partitionsToMakeFollower set中，否则，返回false。</li>
+</ul>
+</li>
+<li>针对partitionsToMakeFollower，移除旧的Fetcher。</li>
+<li>如果leader发生了变化，之前同步的数据和新的leader可能不一致，也有可能之前作为leader的leo大于现在leader的leo，因此需要把log截断至highWater。</li>
+<li>如果当前broker没有在shuttingDown的话，添加新的leader的Fetcher</li>
+</ol>
+<h1 id="consumer-offsets的特殊情况"><a href="#consumer-offsets的特殊情况" class="headerlink" title="__consumer_offsets的特殊情况"></a>__consumer_offsets的特殊情况</h1><p>　　partition中topic为__consumer_offsets的特殊情况处理，对于新成为的leader，调用coordinator.handleGroupImmigration方法，进而调用groupManager.loadGroupsForPartition方法，将从log中把属于当前分区的Offset项恢复到OffsetCache中。对于新成为的followers，coordinator.handleGroupEmigration方法中进而调用groupManager.removeGroupsForPartition方法，清除之前的属于该partition的消费者组提交的offset缓存。</p>
+<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><ol>
+<li><a href="http://blog.csdn.net/c395318621/article/details/52665428" target="_blank" rel="external">Kafka源码阅读-KafkaController(2)</a></li>
+<li><a href="http://www.cnblogs.com/fxjwind/p/4913703.html" target="_blank" rel="external">Apache Kafka源码分析 - KafkaApis</a></li>
+</ol>
 
       
     </div>
@@ -385,9 +397,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/闲聊/" rel="tag">#闲聊</a>
-          
-            <a href="/tags/美食/" rel="tag">#美食</a>
+            <a href="/tags/Kafka-Controller/" rel="tag">#Kafka Controller</a>
           
         </div>
       
@@ -396,17 +406,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/02/12/ckestrel框架浅析/" rel="next" title="Ckestrel框架浅析">
-                <i class="fa fa-chevron-left"></i> Ckestrel框架浅析
+              <a href="/2017/02/18/Note-20170218/" rel="next" title="周六杂记—壹贰叁">
+                <i class="fa fa-chevron-left"></i> 周六杂记—壹贰叁
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/02/19/kafka-controller-makeLeader&Follower/" rel="prev" title="Kafka Controller填坑">
-                Kafka Controller填坑 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -421,10 +427,10 @@
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2017/02/18/Note-20170218/"
-     data-title="周六杂记—壹贰叁"
+        <div class="ds-share flat" data-thread-key="2017/02/19/kafka-controller-makeLeader&Follower/"
+     data-title="Kafka Controller填坑"
      data-content=""
-     data-url="https://geminiguy.github.io/2017/02/18/Note-20170218/">
+     data-url="https://geminiguy.github.io/2017/02/19/kafka-controller-makeLeader&Follower/">
   <div class="ds-share-inline">
     <ul  class="ds-share-icons-16">
 
@@ -451,8 +457,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2017/02/18/Note-20170218/"
-           data-title="周六杂记—壹贰叁" data-url="https://geminiguy.github.io/2017/02/18/Note-20170218/">
+      <div class="ds-thread" data-thread-key="2017/02/19/kafka-controller-makeLeader&Follower/"
+           data-title="Kafka Controller填坑" data-url="https://geminiguy.github.io/2017/02/19/kafka-controller-makeLeader&Follower/">
       </div>
     
   </div>
@@ -572,7 +578,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#杂记壹"><span class="nav-number">1.</span> <span class="nav-text">杂记壹</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#杂记贰"><span class="nav-number">2.</span> <span class="nav-text">杂记贰</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#杂记叁"><span class="nav-number">3.</span> <span class="nav-text">杂记叁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#杂记终"><span class="nav-number">4.</span> <span class="nav-text">杂记终</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#序言"><span class="nav-number">1.</span> <span class="nav-text">序言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ReplicaManager-makeLeaders"><span class="nav-number">2.</span> <span class="nav-text">ReplicaManager.makeLeaders</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ReplicaManager-makeFollowers"><span class="nav-number">3.</span> <span class="nav-text">ReplicaManager.makeFollowers</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#consumer-offsets的特殊情况"><span class="nav-number">4.</span> <span class="nav-text">__consumer_offsets的特殊情况</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考文献"><span class="nav-number">5.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
             
           </div>
         </section>
