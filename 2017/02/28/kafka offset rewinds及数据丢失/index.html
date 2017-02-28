@@ -96,7 +96,7 @@
 <meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/broker-2-expire.png">
 <meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/server-2.png">
 <meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/unclean.png">
-<meta property="og:updated_time" content="2017-02-28T12:53:11.000Z">
+<meta property="og:updated_time" content="2017-02-28T12:56:51.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kafka Offset倒回和数据丢失？">
 <meta name="twitter:description" content="序言Kafka Offset Rewinds是什么？Kafka数据丢失又由哪些原因造成？如果读者对这些问题了如指掌，那么大神走好不送，这篇文章可以不用浪费时间了。本文首先对我们业务生产环境中遇到的offset rewinds问题做一个详尽分析，接着引出kafka数据丢失的各种情况。OK，废话少说，戳我，🔽阅读全文。">
@@ -345,9 +345,11 @@
 <p>This dilemma is not specific to Kafka. It exists in any quorum-based scheme. For example in a majority voting scheme, if a majority of servers suffer a permanent failure, then you must either choose to lose 100% of your data or violate consistency by taking what remains on an existing server as your new source of truth.</p>
 </blockquote>
 <p>需要注意的是，kafka对于数据丢失的保障是基于ISR中至少一个副本在保持同步。如果该分区上所有的副本结点都挂了，那这保证就不再成立了。<br>然后实际系统需要对所有replica die的情况进行处理。如果你人品不好遇到了这种情况，需要考虑以下两种处理方式，就变得至关重要了：</p>
-<pre><code>1. 等着ISR中的一个副本活过来，并选举它为leader
-2. 选择第一个活过来的副本（不一定在ISR中）作为leader
-</code></pre><p>其实这就是针对可用性和一致性的简单权衡了。如果选择等待ISR中的一个副本，那么只要ISR中的replica一直down，ok，那么这个分区就不可用，如果这些replica损坏或者数据丢失（管它什么原因），那就是永久的不可用了。另一个方面，如果我们选择了一个不是ISR中的replica作为leader，那它的log将成为数据源，即使它的log中并不能够保证拥有每条已经被commited的消息。目前我们用的版本中默认是选择了第二种处理方式，如果ISR中的所有replica挂了就选择了一个潜在数据不一致的replica作为leader。如果我们对于数据一致性的要求比宕机可用性的要求更高，就可以通过unclean.leader.election.enable=false禁用掉，这个可以细化到某个topic级别。这里我多说一句什么是committed消息，如果一条消息被ISR中所有的replica记录到log中，那么这条消息就被认为是committed的，对于consumer端而言，只有被committed的消息才能被看到，而High Watermark就是最新的的一条committed message的位移。<br>这种窘境也不只Kafka存在，任何基于quorum的方案中都会存在。例如在多数投票的方案中，如果多数的服务器将可能永久不可用，你是选择100%丢失数据呢？还是违反一致性，用幸存的服务器上还有的数据作为新的数据源？</p>
+<ol>
+<li>等着ISR中的一个副本活过来，并选举它为leader</li>
+<li>选择第一个活过来的副本（不一定在ISR中）作为leader</li>
+</ol>
+<p>其实这就是针对可用性和一致性的简单权衡了。如果选择等待ISR中的一个副本，那么只要ISR中的replica一直down，ok，那么这个分区就不可用，如果这些replica损坏或者数据丢失（管它什么原因），那就是永久的不可用了。另一个方面，如果我们选择了一个不是ISR中的replica作为leader，那它的log将成为数据源，即使它的log中并不能够保证拥有每条已经被commited的消息。目前我们用的版本中默认是选择了第二种处理方式，如果ISR中的所有replica挂了就选择了一个潜在数据不一致的replica作为leader。如果我们对于数据一致性的要求比宕机可用性的要求更高，就可以通过unclean.leader.election.enable=false禁用掉，这个可以细化到某个topic级别。这里我多说一句什么是committed消息，如果一条消息被ISR中所有的replica记录到log中，那么这条消息就被认为是committed的，对于consumer端而言，只有被committed的消息才能被看到，而High Watermark就是最新的的一条committed message的位移。<br>这种窘境也不只Kafka存在，任何基于quorum的方案中都会存在。例如在多数投票的方案中，如果多数的服务器将可能永久不可用，你是选择100%丢失数据呢？还是违反一致性，用幸存的服务器上还有的数据作为新的数据源？</p>
 <h2 id="Producer端数据丢失？"><a href="#Producer端数据丢失？" class="headerlink" title="Producer端数据丢失？"></a>Producer端数据丢失？</h2><p>既然在未同步的replica中选举leader会发生数据丢失，那么从ISR中进行leader选举是否就100%保证数据完整了呢？Native~~我们再来看这种情况：<br><code>ACK=1，ISR=(1,2,3), leader=1</code><br>replica 1作为leader已经确认了producer的一些records写入local log，并成功返回给了producer响应。此时leader failure，且follower 2和3还没来得及复制这些records。重新选举，ISR=(2,3)，其中2当选leader，makeLeader的过程中HW还是保持了之前的旧值。接着1活过来了，成为follower，截断自己的log至HW，replica 1的HW至leo的数据也就被抛弃了，因此之前写入replica 1但还未同步到replica 2的数据也就彻底丢失了。replica 1没有活过来，当然数据也丢失了。<br>解决办法是，producer端设置ACK=all(-1)，broker端针对具体的topic设置min.insync.replicas=2，这样producer只有等待ISR中至少两个replica已经确认写入了这条消息，才会给producer返回正确响应。如果该条件无法满足，则触发异常。<br>当然了，producer端这么设置之后，数据完整性明显高了许多，换来的必然是吞吐量的下降，哎，这又是一个trade-off的问题啊。</p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本文针对unclean leader选举造成的offset rewinds情况进行了实际的分析，进而引出了kafka丢失数据的各种情况。However，针对不同的业务场景进行可用性与数据一致性的权衡、吞吐量与数据完整性的权衡，是非常重要的。当然，最重要的还是保证Kafka集群的的稳定和健康。</p>
 
