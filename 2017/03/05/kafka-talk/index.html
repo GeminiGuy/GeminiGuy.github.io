@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="闲聊," />
+  <meta name="keywords" content="闲聊,Kafka," />
 
 
 
@@ -84,16 +84,18 @@
 
 
 
-<meta name="description" content="Hello world，隔壁老王新的一年博客开张个人比较懒，平时知识点也只是随手记录在印象笔记希望这一年能多写一些技术文章吧Whatever，新年快乐Ps：Hexo的环境配置真是好多坑啊，还是比较喜欢NexT这个主题">
+<meta name="description" content="序使用Kafka也有几个月的时间，然而期间出现了一件怪事儿，背后隐藏着怎样的惊天秘密呢？看完以后倒吸一口凉气，令人不解，男默女泪~~ （ps：uc体实在编不下去了，逃">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="https://geminiguy.github.io/2017/01/01/index/index.html">
+<meta property="og:title" content="震惊，Kafka出大事儿了">
+<meta property="og:url" content="https://geminiguy.github.io/2017/03/05/kafka-talk/index.html">
 <meta property="og:site_name" content="隔壁老王的Blog">
-<meta property="og:description" content="Hello world，隔壁老王新的一年博客开张个人比较懒，平时知识点也只是随手记录在印象笔记希望这一年能多写一些技术文章吧Whatever，新年快乐Ps：Hexo的环境配置真是好多坑啊，还是比较喜欢NexT这个主题">
-<meta property="og:updated_time" content="2017-01-14T09:27:00.000Z">
+<meta property="og:description" content="序使用Kafka也有几个月的时间，然而期间出现了一件怪事儿，背后隐藏着怎样的惊天秘密呢？看完以后倒吸一口凉气，令人不解，男默女泪~~ （ps：uc体实在编不下去了，逃">
+<meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/run-20170305.png">
+<meta property="og:updated_time" content="2017-03-06T09:14:04.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello World">
-<meta name="twitter:description" content="Hello world，隔壁老王新的一年博客开张个人比较懒，平时知识点也只是随手记录在印象笔记希望这一年能多写一些技术文章吧Whatever，新年快乐Ps：Hexo的环境配置真是好多坑啊，还是比较喜欢NexT这个主题">
+<meta name="twitter:title" content="震惊，Kafka出大事儿了">
+<meta name="twitter:description" content="序使用Kafka也有几个月的时间，然而期间出现了一件怪事儿，背后隐藏着怎样的惊天秘密呢？看完以后倒吸一口凉气，令人不解，男默女泪~~ （ps：uc体实在编不下去了，逃">
+<meta name="twitter:image" content="http://ol7f62vwl.bkt.clouddn.com/run-20170305.png">
 
 
 
@@ -111,7 +113,7 @@
   };
 </script>
 
-  <title> Hello World | 隔壁老王的Blog </title>
+  <title> 震惊，Kafka出大事儿了 | 隔壁老王的Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -250,7 +252,7 @@
             
             
               
-                Hello World
+                震惊，Kafka出大事儿了
               
             
           </h1>
@@ -262,8 +264,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-01-01T00:00:00+08:00" content="2017-01-01">
-              2017-01-01
+            <time itemprop="dateCreated" datetime="2017-03-05T00:00:00+08:00" content="2017-03-05">
+              2017-03-05
             </time>
           </span>
 
@@ -276,8 +278,8 @@
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/闲聊/" itemprop="url" rel="index">
-                    <span itemprop="name">闲聊</span>
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
                   </a>
                 </span>
 
@@ -292,8 +294,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2017/01/01/index/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/01/index/" itemprop="commentsCount"></span>
+                <a href="/2017/03/05/kafka-talk/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/05/kafka-talk/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -316,7 +318,22 @@
       
 
       
-        <p>Hello world，隔壁老王<br>新的一年博客开张<br>个人比较懒，平时知识点也只是随手记录在印象笔记<br>希望这一年能多写一些技术文章吧<br>Whatever，新年快乐<br>Ps：Hexo的环境配置真是好多坑啊，还是比较喜欢NexT这个主题</p>
+        <h1 id="序"><a href="#序" class="headerlink" title="序"></a>序</h1><p>使用Kafka也有几个月的时间，然而期间出现了一件怪事儿，背后隐藏着怎样的惊天秘密呢？看完以后倒吸一口凉气，令人不解，男默女泪~~ （ps：uc体实在编不下去了，逃<br><a id="more"></a></p>
+<h1 id="遇到的问题及分析"><a href="#遇到的问题及分析" class="headerlink" title="遇到的问题及分析"></a>遇到的问题及分析</h1><p>Kafka使用过程中出现过一个比较严重的问题，每天都会有若干个的broker不定时间的触发SessionExpirationListener，也就是broker与zk的session出现超时，默认为6s，<strong><em>少则十几次，多则二十多次</em></strong>。broker与zookeeper的会话超时有多方面的原因，例如broker gc、主机cpu、memeory、网络资源不足、zk端hang on等等。下面一一进行排查。</p>
+<ol>
+<li>zookeeper.session.timeout.ms默认为6000(6s)，出现session timeout又重新和zk建立了session时，SessionExpireListener的handleNewSession被触发，相当于重新在/broker/ids/下注册broker结点信息，接着触发BrokerChangeListener的handleChildChange方法。从zk的/broker/ids结点因超时被删除到重新建立这个过程，90%的情况都在1个ticktime（2s）搞定，也就是说超时后2s又回来了。ok，接着我就去broker的server.properties中把zookeeper.session.timeout.ms=12000。</li>
+<li>然并卵，情况并没有缓解多少。绝大部分情况还是2s后会话又重新建立了，囧，玩我呢。之后我就去查究竟什么原因导致的这个会话超时。针对这个问题，很多人会说查gc啊，好，查gc，把出问题时间段的gc日志拉出来，对所有的gc时间排序（管它的是young gc还是full gc，管它是stw以及可以和用户线程并发执行的），排除这个原因，囧。</li>
+<li>broker端cpu（12核机器占满6核数，），memory和网络资源都没问题。zk端这些资源更充足了，也不是这个原因。而且几台broker的Byte in和Byte out都不算高。</li>
+<li>zk hang on，排除。</li>
+<li><p>怎么破，只能试着再提升下超时时间。</p>
+<blockquote>
+<p>zookeeper.connection.timeout.ms=12000<br>zookeeper.session.timeout.ms=20000</p>
+</blockquote>
+</li>
+<li><p>改完这个配置，居然五天内只出现了一次zk expire的情况，真是醉了。究竟是实际运维Kafka过程中遇到“真”的问题，还是玄学似的有这么一个阈值的限制呢？还是不得而知，ps，信息系统部专门管理Kafka的参数设置好像也是设置的20s。</p>
+</li>
+</ol>
+<h1 id="Final"><a href="#Final" class="headerlink" title="Final"></a>Final</h1><p>这个问题暂时作为一个未解之谜吧，或许有一天就突然发现了呢。这周六做的农家小炒肉真是失败，关键是小区门口超市没有猪后腿肉了，以后想做肉菜还得去趟大超市采购。周末跑步打卡贴一下，不然如何对得起这个闲聊tag，闪人~~<br><img src="http://ol7f62vwl.bkt.clouddn.com/run-20170305.png" alt="run-20170305"></p>
 
       
     </div>
@@ -361,6 +378,8 @@
           
             <a href="/tags/闲聊/" rel="tag">#闲聊</a>
           
+            <a href="/tags/Kafka/" rel="tag">#Kafka</a>
+          
         </div>
       
 
@@ -368,13 +387,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2017/03/04/jinganglang3-Logan/" rel="next" title="17年，狼叔再见">
+                <i class="fa fa-chevron-left"></i> 17年，狼叔再见
+              </a>
+            
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/01/13/Kafka-Controller/" rel="prev" title="Kafka Controller">
-                Kafka Controller <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -389,10 +408,10 @@
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2017/01/01/index/"
-     data-title="Hello World"
+        <div class="ds-share flat" data-thread-key="2017/03/05/kafka-talk/"
+     data-title="震惊，Kafka出大事儿了"
      data-content=""
-     data-url="https://geminiguy.github.io/2017/01/01/index/">
+     data-url="https://geminiguy.github.io/2017/03/05/kafka-talk/">
   <div class="ds-share-inline">
     <ul  class="ds-share-icons-16">
 
@@ -419,8 +438,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2017/01/01/index/"
-           data-title="Hello World" data-url="https://geminiguy.github.io/2017/01/01/index/">
+      <div class="ds-thread" data-thread-key="2017/03/05/kafka-talk/"
+           data-title="震惊，Kafka出大事儿了" data-url="https://geminiguy.github.io/2017/03/05/kafka-talk/">
       </div>
     
   </div>
@@ -540,7 +559,7 @@
               
             
             
-              <p class="post-toc-empty">此文章未包含目录</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#序"><span class="nav-number">1.</span> <span class="nav-text">序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#遇到的问题及分析"><span class="nav-number">2.</span> <span class="nav-text">遇到的问题及分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Final"><span class="nav-number">3.</span> <span class="nav-text">Final</span></a></li></ol></div>
             
           </div>
         </section>
