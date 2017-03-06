@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="闲聊,Kafka," />
+  <meta name="keywords" content="Kafka,闲聊," />
 
 
 
@@ -91,7 +91,7 @@
 <meta property="og:site_name" content="隔壁老王的Blog">
 <meta property="og:description" content="序使用Kafka也有几个月的时间，然而期间出现了一件怪事儿，背后隐藏着怎样的惊天秘密呢？看完以后倒吸一口凉气，令人不解，男默女泪~~ （ps：uc体实在编不下去了，逃">
 <meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/run-20170305.png">
-<meta property="og:updated_time" content="2017-03-06T09:14:04.000Z">
+<meta property="og:updated_time" content="2017-03-06T10:49:52.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="震惊，Kafka出大事儿了">
 <meta name="twitter:description" content="序使用Kafka也有几个月的时间，然而期间出现了一件怪事儿，背后隐藏着怎样的惊天秘密呢？看完以后倒吸一口凉气，令人不解，男默女泪~~ （ps：uc体实在编不下去了，逃">
@@ -323,7 +323,7 @@
 <ol>
 <li>zookeeper.session.timeout.ms默认为6000(6s)，出现session timeout又重新和zk建立了session时，SessionExpireListener的handleNewSession被触发，相当于重新在/broker/ids/下注册broker结点信息，接着触发BrokerChangeListener的handleChildChange方法。从zk的/broker/ids结点因超时被删除到重新建立这个过程，90%的情况都在1个ticktime（2s）搞定，也就是说超时后2s又回来了。ok，接着我就去broker的server.properties中把zookeeper.session.timeout.ms=12000。</li>
 <li>然并卵，情况并没有缓解多少。绝大部分情况还是2s后会话又重新建立了，囧，玩我呢。之后我就去查究竟什么原因导致的这个会话超时。针对这个问题，很多人会说查gc啊，好，查gc，把出问题时间段的gc日志拉出来，对所有的gc时间排序（管它的是young gc还是full gc，管它是stw以及可以和用户线程并发执行的），排除这个原因，囧。</li>
-<li>broker端cpu（12核机器占满6核数，），memory和网络资源都没问题。zk端这些资源更充足了，也不是这个原因。而且几台broker的Byte in和Byte out都不算高。</li>
+<li>broker端cpu（12核机器占满6核，这个还待研究），memory和网络资源都没问题。zk端这些资源更充足了，也不是这个原因。而且几台broker的Byte in和Byte out都不算高。</li>
 <li>zk hang on，排除。</li>
 <li><p>怎么破，只能试着再提升下超时时间。</p>
 <blockquote>
@@ -376,9 +376,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/闲聊/" rel="tag">#闲聊</a>
-          
             <a href="/tags/Kafka/" rel="tag">#Kafka</a>
+          
+            <a href="/tags/闲聊/" rel="tag">#闲聊</a>
           
         </div>
       
