@@ -84,22 +84,22 @@
 
 
 
-<meta name="description" content="序言　　Kafka Offset Rewinds是什么？Kafka数据丢失又由哪些原因造成？如果读者对这些问题了如指掌，那么大神走好不送，这篇文章可以不用浪费时间了。本文首先对我们业务生产环境中遇到的offset rewinds问题做一个详尽分析，接着引出kafka数据丢失的各种情况。OK，废话少说，戳我，🔽阅读全文。">
+<meta name="description" content="序言　　本文为之前的一篇文章的更新，写完一直没挂到博客上，现直接顶到最新日期吧。之前看过的客官请直接忽略。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Kafka Offset倒回和数据丢失？">
-<meta property="og:url" content="https://geminiguy.github.io/2017/02/28/kafka-offset-rewinds-offset-lost/index.html">
+<meta property="og:title" content="Kafka Offset倒回和数据丢失">
+<meta property="og:url" content="https://geminiguy.github.io/2017/04/27/kafka-rewinds-data-lost/index.html">
 <meta property="og:site_name" content="隔壁老王的Blog">
-<meta property="og:description" content="序言　　Kafka Offset Rewinds是什么？Kafka数据丢失又由哪些原因造成？如果读者对这些问题了如指掌，那么大神走好不送，这篇文章可以不用浪费时间了。本文首先对我们业务生产环境中遇到的offset rewinds问题做一个详尽分析，接着引出kafka数据丢失的各种情况。OK，废话少说，戳我，🔽阅读全文。">
+<meta property="og:description" content="序言　　本文为之前的一篇文章的更新，写完一直没挂到博客上，现直接顶到最新日期吧。之前看过的客官请直接忽略。">
 <meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/rewind-offset.png">
 <meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/broker-2-controller.png">
 <meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/broker-1-controller.png">
 <meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/broker-2-expire.png">
 <meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/server-2.png">
 <meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/unclean.png">
-<meta property="og:updated_time" content="2017-03-05T02:14:15.000Z">
+<meta property="og:updated_time" content="2017-04-27T03:46:31.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Kafka Offset倒回和数据丢失？">
-<meta name="twitter:description" content="序言　　Kafka Offset Rewinds是什么？Kafka数据丢失又由哪些原因造成？如果读者对这些问题了如指掌，那么大神走好不送，这篇文章可以不用浪费时间了。本文首先对我们业务生产环境中遇到的offset rewinds问题做一个详尽分析，接着引出kafka数据丢失的各种情况。OK，废话少说，戳我，🔽阅读全文。">
+<meta name="twitter:title" content="Kafka Offset倒回和数据丢失">
+<meta name="twitter:description" content="序言　　本文为之前的一篇文章的更新，写完一直没挂到博客上，现直接顶到最新日期吧。之前看过的客官请直接忽略。">
 <meta name="twitter:image" content="http://ol7f62vwl.bkt.clouddn.com/rewind-offset.png">
 
 
@@ -118,7 +118,7 @@
   };
 </script>
 
-  <title> Kafka Offset倒回和数据丢失？ | 隔壁老王的Blog </title>
+  <title> Kafka Offset倒回和数据丢失 | 隔壁老王的Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -257,7 +257,7 @@
             
             
               
-                Kafka Offset倒回和数据丢失？
+                Kafka Offset倒回和数据丢失
               
             
           </h1>
@@ -269,8 +269,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-02-28T00:00:00+08:00" content="2017-02-28">
-              2017-02-28
+            <time itemprop="dateCreated" datetime="2017-04-27T00:00:00+08:00" content="2017-04-27">
+              2017-04-27
             </time>
           </span>
 
@@ -299,8 +299,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2017/02/28/kafka-offset-rewinds-offset-lost/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/02/28/kafka-offset-rewinds-offset-lost/" itemprop="commentsCount"></span>
+                <a href="/2017/04/27/kafka-rewinds-data-lost/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/04/27/kafka-rewinds-data-lost/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -323,14 +323,15 @@
       
 
       
-        <h1 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h1><p>　　Kafka Offset Rewinds是什么？Kafka数据丢失又由哪些原因造成？如果读者对这些问题了如指掌，那么大神走好不送，这篇文章可以不用浪费时间了。本文首先对我们业务生产环境中遇到的offset rewinds问题做一个详尽分析，接着引出kafka数据丢失的各种情况。OK，废话少说，戳我，🔽阅读全文。<br><a id="more"></a></p>
-<h1 id="Kafka-Offset-Rewinds"><a href="#Kafka-Offset-Rewinds" class="headerlink" title="Kafka Offset Rewinds"></a>Kafka Offset Rewinds</h1><h2 id="Offset-Rewinds概念"><a href="#Offset-Rewinds概念" class="headerlink" title="Offset Rewinds概念"></a>Offset Rewinds概念</h2><p>　　Kafka的某个group的某个consumer进程（线程）由Coordinator分配了消费任务去fetch某个分区的数据后，会根据该group提交的offset去决定从分区的哪个偏移位置去开始消费。当然，如果这是一个新的group还没有提交过offset，或者之前提交的offset发生了越界错误，比如offset对应的位移的数据由于已过期日志已被删除，再比如，你想poll的那个位移处的数据还没有写入leader（wtf？这是有可能的，正是本文现象所讨论的，别急，往下看）。此时就会根据你的consumer实例初始化时设置的auto.offset.reset参数决定处理方式。设置为earliest，从leader能获取的最小的位移偏移量开始拉取数据，造成大量重复消费。latest则自动初始化为最新的位移偏移量处poll数据进行消费，存在丢失数据的可能性。而本文的offset rewinds主要是指offset位移偏移量倒回到最早的一条数据开始消费这种现象。</p>
-<h2 id="现象review及排查"><a href="#现象review及排查" class="headerlink" title="现象review及排查"></a>现象review及排查</h2><p>　　先来看一下这个问题是如何被监控到的，我们的同学对于wb_userdata_ffk03新开了个group，将消费到的数据写入influxdb并基于Grafana进行了监控，可以看到某天晚上19：00左右的时候消费的数据量比之前突增了五倍，同时Burrow也发出了lag堆积报警，查看Kafka-manager也可以看到几个堆积的分区在同一个broker上面。种种现象说明了我们的group发生了offset rewinds，从头开始消费。<br><img src="http://ol7f62vwl.bkt.clouddn.com/rewind-offset.png" alt="kafka-monitor"><br>　　以topic：wb_userdata_ffk03，partition：19，AR：[2,3]，ISR：[2,3], leader：2为例。去相应的broker上面进行日志排查，看看7点左右到底发生了什么。broker 2的controller.log显示如下：<br><img src="http://ol7f62vwl.bkt.clouddn.com/broker-2-controller.png" alt="2-25 broker-1"><br>　　broker 1的controller.log<br><img src="http://ol7f62vwl.bkt.clouddn.com/broker-1-controller.png" alt=""><br>　　从上面两张截图可以看到broker 2在18:58:54时重新加入了，说明之前该结点被删过额，那第二张截图为何没有打印deleted brokers呢，只有一个原因，broker 2此时还是controller，囧啊。不过没有关系，下面这张截图broker 2 controller的日志明确验证了此时broker 2 session timeout，broker failure喽。<br><img src="http://ol7f62vwl.bkt.clouddn.com/broker-2-expire.png" alt=""><br>　　到目前为止，我们能够确信这个时间点，这个分区的leader 2确实failure了，但是为何会出现offset rewinds呢？悲剧继续上演…… 这张截图是broker 2的server.log，可以看到这时候replica 3从ISR中被踢出去了，此时ISR中就只有2了，接着leader 2又发生了宕机😶。<br><img src="http://ol7f62vwl.bkt.clouddn.com/server-2.png" alt=""></p>
-<p>　　关于这个ISR状态的变化我再多说一点。什么情况下一个replica会被从ISR中踢出去呢？先大体看一下maybeShrinkIsr和getOutOfSyncReplicas两个函数。</p>
+        <h1 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h1><p>　　本文为之前的一篇文章的更新，写完一直没挂到博客上，现直接顶到最新日期吧。之前看过的客官请直接忽略。<br>　　<a id="more"></a><br>　　Kafka Offset Rewinds是什么？Kafka数据丢失又由哪些原因造成？如果读者对这些问题了如指掌，那么大神走好不送，这篇文章可以不用浪费时间了。本文首先对我们业务生产环境中遇到的offset rewinds问题做了一个详尽分析，接着引出unclean选举的问题，最后会对数据安全性的一些参数做相关说明。</p>
+<h1 id="Kafka-Offset-Rewinds"><a href="#Kafka-Offset-Rewinds" class="headerlink" title="Kafka Offset Rewinds"></a>Kafka Offset Rewinds</h1><h2 id="Offset-Rewinds概念"><a href="#Offset-Rewinds概念" class="headerlink" title="Offset Rewinds概念"></a>Offset Rewinds概念</h2><p>　　Kafka的某个group的某个consumer进程（线程）由Coordinator分配了消费任务去fetch某个分区的数据后，会根据该group提交的offset去决定从分区的哪个偏移位置去开始消费。当然，如果这是一个新的group还没有提交过offset，或者之前提交的offset发生了越界错误，比如offset对应的位移的数据由于已过期日志已被删除，再比如，你想poll的那个位移处的数据还没有写入leader（wtf？这是有可能的，正是本文现象所讨论的，别急，往下看）。发生这些情况就会根据你的consumer实例初始化时设置的auto.offset.reset参数决定处理方式。设置为earliest，从leader能获取到的最小的位移偏移量开始拉取数据，设置为latest则初始化为最新的位移偏移量处开始poll数据进行消费。当发生“故障”而触发auto.offset.reset时，两者的区别只是重复消费数据量多少的区别。本文的offset rewinds概念主要是指offset位移偏移量倒回到最早的一条数据开始消费这种现象。</p>
+<h2 id="现象review及排查"><a href="#现象review及排查" class="headerlink" title="现象review及排查"></a>现象review及排查</h2><p>　　先来看一下这个问题是如何被监控到的，我们的同学对于wb_userdata_ffk03新开了个group，将消费到的数据写入Influxdb并基于Grafana进行了监控，可以看到某天晚上19：00左右的时候消费的数据量比之前突增了五倍，同时Burrow也发出了lag堆积报警，查看Kafka-manager也可以看到几个堆积的分区在同一个broker上面。种种现象说明了我们的group发生了offset rewinds，从头开始消费。<br><img src="http://ol7f62vwl.bkt.clouddn.com/rewind-offset.png" alt="kafka-monitor"><br>　　以topic：wb_userdata_ffk03，partition：19，AR：[2,3]，ISR：[2,3], leader：2为例。去相应的broker上面进行日志排查，看看7点左右到底发生了什么。broker 2的controller.log显示如下：<br><img src="http://ol7f62vwl.bkt.clouddn.com/broker-2-controller.png" alt="2-25 broker-1"><br>　　broker 1的controller.log<br><img src="http://ol7f62vwl.bkt.clouddn.com/broker-1-controller.png" alt=""><br>　　从上面两张截图可以看到broker 2在18:58:54时重新加入了，说明之前该结点被删过额，那第二张截图为何没有打印deleted brokers呢，只有一个原因，broker 2此时还是controller，囧啊。不过没有关系，下面这张截图broker 2 controller的日志明确验证了此时broker 2 session timeout，broker failure喽。<br><img src="http://ol7f62vwl.bkt.clouddn.com/broker-2-expire.png" alt=""><br>　　到目前为止，我们能够确信这个时间点，这个分区的leader 2确实failure了，但是为何会出现offset rewinds呢？悲剧继续上演…… 这张截图是broker 2的server.log，可以看到这时候replica 3从ISR中被踢出去了，此时ISR中就只有2了，接着leader 2又发生了宕机😶。<br><img src="http://ol7f62vwl.bkt.clouddn.com/server-2.png" alt=""></p>
+<p>　　关于这个ISR状态的变化我再多说一点。什么情况下一个replica会被从ISR中踢出去呢？我们来大体看一下maybeShrinkIsr和getOutOfSyncReplicas两个函数。</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">maybeShrinkIsr</span></span>(replicaMaxLagTimeMs: <span class="type">Long</span>) &#123;</div><div class="line">      <span class="keyword">val</span> leaderHWIncremented = inWriteLock(leaderIsrUpdateLock) &#123;</div><div class="line">      leaderReplicaIfLocal() <span class="keyword">match</span> &#123;</div><div class="line">      <span class="keyword">case</span> <span class="type">Some</span>(leaderReplica) =&gt;</div><div class="line">          <span class="keyword">val</span> outOfSyncReplicas = getOutOfSyncReplicas(leaderReplica, replicaMaxLagTimeMs)</div><div class="line">          <span class="keyword">if</span>(outOfSyncReplicas.size &gt; <span class="number">0</span>) &#123;</div><div class="line">              <span class="keyword">val</span> newInSyncReplicas = inSyncReplicas -- outOfSyncReplicas</div><div class="line">              assert(newInSyncReplicas.size &gt; <span class="number">0</span>)</div><div class="line">              info(<span class="string">"Shrinking ISR for partition [%s,%d] from %s to %s"</span>.format(topic, partitionId,inSyncReplicas.map(_.brokerId).mkString(<span class="string">","</span>),newInSyncReplicas.map(_.brokerId).mkString(<span class="string">","</span>)))</div><div class="line">              <span class="comment">// update ISR in zk and in cache</span></div><div class="line">              updateIsr(newInSyncReplicas)</div><div class="line">              <span class="comment">// we may need to increment high watermark since ISR could be down to 1</span></div><div class="line"></div><div class="line">              replicaManager.isrShrinkRate.mark()</div><div class="line">              maybeIncrementLeaderHW(leaderReplica)</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">          <span class="literal">false</span></div><div class="line">        &#125;</div><div class="line">      <span class="keyword">case</span> <span class="type">None</span> =&gt; <span class="literal">false</span> <span class="comment">// do nothing if no longer leader</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">      <span class="comment">// some delayed operations may be unblocked after HW changed</span></div><div class="line">      <span class="keyword">if</span> (leaderHWIncremented)</div><div class="line">          tryCompleteDelayedRequests()</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">getOutOfSyncReplicas</span></span>(leaderReplica: <span class="type">Replica</span>, maxLagMs: <span class="type">Long</span>): <span class="type">Set</span>[<span class="type">Replica</span>] = &#123;</div><div class="line">  <span class="comment">/**</span></div><div class="line">   * there are two cases that will be handled here -</div><div class="line">   * 1. Stuck followers: If the leo of the replica hasn't been updated for maxLagMs ms,</div><div class="line">   *                     the follower is stuck and should be removed from the ISR</div><div class="line">   * 2. Slow followers: If the replica has not read up to the leo within the last maxLagMs ms,</div><div class="line">   *                    then the follower is lagging and should be removed from the ISR</div><div class="line">   * Both these cases are handled by checking the lastCaughtUpTimeMs which represents</div><div class="line">   * the last time when the replica was fully caught up. If either of the above conditions</div><div class="line">   * is violated, that replica is considered to be out of sync</div><div class="line">   *</div><div class="line">   **/</div><div class="line">  <span class="keyword">val</span> leaderLogEndOffset = leaderReplica.logEndOffset</div><div class="line">  <span class="keyword">val</span> candidateReplicas = inSyncReplicas - leaderReplica</div><div class="line"></div><div class="line">  <span class="keyword">val</span> laggingReplicas = candidateReplicas.filter(r =&gt; (time.milliseconds - r.lastCaughtUpTimeMs) &gt; maxLagMs)</div><div class="line">  <span class="keyword">if</span>(laggingReplicas.size &gt; <span class="number">0</span>)</div><div class="line">    debug(<span class="string">"Lagging replicas for partition %s are %s"</span>.format(<span class="type">TopicAndPartition</span>(topic, partitionId), laggingReplicas.map(_.brokerId).mkString(<span class="string">","</span>)))</div><div class="line">  laggingReplicas</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>　　在getOutOfSyncReplicas函数的注释中把replica剔除ISR的情况说的比较清楚。<br>　　1.这个replica fetch的进程stuck住了，该replica的leo超过maxLagMs没有更新了。<br>　　2. follower的拷贝速度远远跟不上leader的写入速度，已经持续落后了maxLagMs。<br>　　这两种情况都可以用lastCaughtUpTimeMs来计时，这个参数代表了这个replica上一次完全追上leader的时间戳。<br>　　接着我们再来看一下ISR中只剩下2，而2又宕机了，肿么办，其实此刻该分区还是可以用的，因为默认开启了unclean.leader.election.enable这个功能，允许进行unclean选举，未能及时同步的replica 3被选举为leader，可以看如下日志。发生unclean选举的危害不只在offset会发生倒退，而且未能同步到replica的数据基本上就丢失了。那么把这个功能关了不就ok了吗？自古美事两难全，我们在下一节来细说这个Unclean leader election。<br><img src="http://ol7f62vwl.bkt.clouddn.com/unclean.png" alt="unclean-log"></p>
-<h2 id="其他问题"><a href="#其他问题" class="headerlink" title="其他问题"></a>其他问题</h2><p>　　其实造成offset rewinds的问题是并不局限于unclean leader election，<a href="http://i.dataguru.cn/mportal.php?mod=view&amp;aid=9468" target="_blank" rel="external">剖析Linkedln遭遇的Kafka“危机故障”</a>这篇文章中也介绍了LinkedIn之前遇到的一些Bug级别（目前已修复）的offset rewinds，以供参考。</p>
-<h1 id="Kafka数据丢失？"><a href="#Kafka数据丢失？" class="headerlink" title="Kafka数据丢失？"></a>Kafka数据丢失？</h1><h2 id="Unclean-leader-election"><a href="#Unclean-leader-election" class="headerlink" title="Unclean leader election"></a>Unclean leader election</h2><p>　　是否允许unclean选举其实也是可用性和数据一致性的trade-off问题。官方文档针对unclean选举有这么一段，我结合自己的理解来翻译一下。</p>
+<p>　　在getOutOfSyncReplicas函数的注释中把replica剔除ISR的情况说的比较清楚。<br>　　1.这个replica fetch的进程stuck住了，该replica的leo超过maxLagMs没有更新了。<br>　　2. follower的拷贝速度远远跟不上leader的写入速度，已经持续落后了maxLagMs。<br>　　这两种情况都可以用lastCaughtUpTimeMs来计时，这个参数代表了这个replica上一次完全追上leader的时间戳。接着我们再来看一下ISR中只剩下2，而2又宕机了，肿么办，其实此刻该分区还是可以用的，因为默认开启了unclean.leader.election.enable这个功能，允许进行unclean选举，未能及时同步的replica 3被选举为leader，可以看到如下日志。<br><img src="http://ol7f62vwl.bkt.clouddn.com/unclean.png" alt="unclean-log"><br>　　将上面所说的这些流程化如下：<br>　　1. [wb_userdata_ffk03,19]，ISR：[2,3]，leader：2<br>　　2. replica 3因跟不上leader 2的速度从ISR中被踢出来，ISR：[2]<br>　　3. leader 2和zk会话超时，/broker/ids节点被删，ISR中没有replica了，触发unclean选举，leader：3，ISR:[3]，HW变为3的leo<br>　　4. 分配到19分区的consumer进程（线程）继续从上一次消费完的offset的下一条开始poll数据，这个offset在leader 3的log中不存在（这些数据还没有从之前的leader 2 同步fetch过来），进而触发auto.offset.reset，这个因为设置的为earliest，因此从replica 3的log保存的最早的一条数据开始消费，造成offset rewinds现象<br>　　5. broker 2重新建立会话回来后，成为follower，log被截断至HW，HW到自己的leo之间的数据当然也就丢失了。</p>
+<h2 id="其他问题"><a href="#其他问题" class="headerlink" title="其他问题"></a>其他问题</h2><p>　　其实造成offset rewinds的问题是并不局限于unclean leader election，<a href="http://i.dataguru.cn/mportal.php?mod=view&amp;aid=9468" target="_blank" rel="external">剖析Linkedln遭遇的Kafka“危机故障”</a>这篇文章中也介绍了LinkedIn之前遇到的一些Bug级别（目前已修复）的offset rewinds，以供参考。　　</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>　　综上所述，由于unclean选举会触发auto.offset.reset且肯定会丢失数据，那你肯定会说这个功能关了不就ok了吗？自古美事两难全，我们在下一节来细说这个Unclean leader election。</p>
+<h1 id="Unclean-leader-election"><a href="#Unclean-leader-election" class="headerlink" title="Unclean leader election"></a>Unclean leader election</h1><p>　　是否允许unclean选举其实也是可用性和数据一致性的trade-off问题。官方文档针对unclean选举有这么一段，我结合自己的理解来翻译一下。</p>
 <blockquote>
 <p><strong>Unclean leader election: What if they all die?</strong><br>Note that Kafka’s guarantee with respect to data loss is predicated on at least one replica remaining in sync. If all the nodes replicating a partition die, this guarantee no longer holds.<br>However a practical system needs to do something reasonable when all the replicas die. If you are unlucky enough to have this occur, it is important to consider what will happen. There are two behaviors that could be implemented:</p>
 <ol>
@@ -346,8 +347,8 @@
 <li>选择第一个活过来的副本（不一定在ISR中）作为leader</li>
 </ol>
 <p>　　其实这就是针对可用性和一致性的简单权衡了。如果选择等待ISR中的一个副本，那么只要ISR中的replica一直down，ok，那么这个分区就不可用，如果这些replica损坏或者数据丢失（管它什么原因），那就是永久的不可用了。另一个方面，如果我们选择了一个不是ISR中的replica作为leader，那它的log将成为数据源，即使它的log中并不能够保证拥有每条已经被commited的消息。目前我们用的版本中默认是选择了第二种处理方式，如果ISR中的所有replica挂了就选择了一个潜在数据不一致的replica作为leader。如果我们对于数据一致性的要求比宕机可用性的要求更高，就可以通过unclean.leader.election.enable=false禁用掉，这个可以细化到某个topic级别。这里我多说一句什么是committed消息，如果一条消息被ISR中所有的replica记录到log中，那么这条消息就被认为是committed的，对于consumer端而言，只有被committed的消息才能被看到，而High Watermark就是最新的的一条committed message的位移。<br>　　这种窘境也不只Kafka存在，任何基于quorum的方案中都会存在。例如在多数投票的方案中，如果多数的服务器将可能永久不可用，你是选择100%丢失数据呢？还是违反一致性，用幸存的服务器上还有的数据作为新的数据源？</p>
-<h2 id="Producer端数据丢失？"><a href="#Producer端数据丢失？" class="headerlink" title="Producer端数据丢失？"></a>Producer端数据丢失？</h2><p>　　既然在未同步的replica中选举leader会发生数据丢失，那么从ISR中进行leader选举是否就100%保证数据完整了呢？Native~~我们再来看这种情况：<br>　　<code>ACK=1，ISR=(1,2,3), leader=1</code><br>　　replica 1作为leader已经确认了producer的一些records写入local log，并成功返回给了producer响应。此时leader failure，且follower 2和3还没来得及复制这些records。重新选举，ISR=(2,3)，其中2当选leader，makeLeader的过程中HW还是保持了之前的旧值。接着1活过来了，成为follower，截断自己的log至HW，replica 1的HW至leo的数据也就被抛弃了，因此之前写入replica 1但还未同步到replica 2的数据也就彻底丢失了。replica 1没有活过来，当然数据也丢失了。<br>　　解决办法是，producer端设置ACK=all(-1)，broker端针对具体的topic设置min.insync.replicas=2，这样producer只有等待ISR中至少两个replica已经确认写入了这条消息，才会给producer返回正确响应。如果该条件无法满足，则触发异常。当然了，producer端这么设置之后，数据完整性明显高了许多，换来的必然是吞吐量的下降，哎，这又是一个trade-off的问题啊。</p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>　　本文针对unclean leader选举造成的offset rewinds情况进行了实际的分析，进而引出了kafka丢失数据的各种情况。However，针对不同的业务场景进行可用性与数据一致性的权衡、吞吐量与数据完整性的权衡，是非常重要的。最重要的还是保证Kafka集群的的稳定和健康。</p>
+<h1 id="数据安全性保证的参数"><a href="#数据安全性保证的参数" class="headerlink" title="数据安全性保证的参数"></a>数据安全性保证的参数</h1><p>　　下面来列举一下涉及数据安全性的相关参数，这里因producer的retry机制而max.in.flight.requests.per.connection&gt;1造成的消息乱序问题不在讨论之列。<br>　　1. replication.factor=3，副本因子设为3，有三份备份。<br>　　2. ACK=all(-1)，min.insync.replicas=2，两个参数配合使用，意味着producer至少要同步写进两个replica的log中，这条消息才被返回正常相应。这样设置后producer的吞吐量必然会下降，且如果某个分区有两个replica不可用的话，那么producer端就会触发NotEnoughReplicas或NotEnoughReplicasAfterAppend的异常。<br>　　3. unclean.leader.election.enable=false，这个上面已经详细分析过，数据一致性和可用性的权衡。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>　　本文针对unclean leader选举造成的offset rewinds情况进行了实际的分析，进而对数据安全性相关的参数进行了说明。However，针对不同的业务场景进行数据可用性与数据一致性的权衡、吞吐量与数据完整性的权衡，是非常重要的。当然最重要的还是保证Kafka集群的的稳定和健康。</p>
 
       
     </div>
@@ -403,17 +404,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/02/26/周末瞎扯淡/" rel="next" title="周末瞎扯淡">
-                <i class="fa fa-chevron-left"></i> 周末瞎扯淡
+              <a href="/2017/03/26/20170326/" rel="next" title="20170326周末杂">
+                <i class="fa fa-chevron-left"></i> 20170326周末杂
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/03/04/jinganglang3-Logan/" rel="prev" title="17年，狼叔再见">
-                17年，狼叔再见 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -428,10 +425,10 @@
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2017/02/28/kafka-offset-rewinds-offset-lost/"
-     data-title="Kafka Offset倒回和数据丢失？"
+        <div class="ds-share flat" data-thread-key="2017/04/27/kafka-rewinds-data-lost/"
+     data-title="Kafka Offset倒回和数据丢失"
      data-content=""
-     data-url="https://geminiguy.github.io/2017/02/28/kafka-offset-rewinds-offset-lost/">
+     data-url="https://geminiguy.github.io/2017/04/27/kafka-rewinds-data-lost/">
   <div class="ds-share-inline">
     <ul  class="ds-share-icons-16">
 
@@ -458,8 +455,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2017/02/28/kafka-offset-rewinds-offset-lost/"
-           data-title="Kafka Offset倒回和数据丢失？" data-url="https://geminiguy.github.io/2017/02/28/kafka-offset-rewinds-offset-lost/">
+      <div class="ds-thread" data-thread-key="2017/04/27/kafka-rewinds-data-lost/"
+           data-title="Kafka Offset倒回和数据丢失" data-url="https://geminiguy.github.io/2017/04/27/kafka-rewinds-data-lost/">
       </div>
     
   </div>
@@ -579,7 +576,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#序言"><span class="nav-number">1.</span> <span class="nav-text">序言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Kafka-Offset-Rewinds"><span class="nav-number">2.</span> <span class="nav-text">Kafka Offset Rewinds</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Offset-Rewinds概念"><span class="nav-number">2.1.</span> <span class="nav-text">Offset Rewinds概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#现象review及排查"><span class="nav-number">2.2.</span> <span class="nav-text">现象review及排查</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他问题"><span class="nav-number">2.3.</span> <span class="nav-text">其他问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Kafka数据丢失？"><span class="nav-number">3.</span> <span class="nav-text">Kafka数据丢失？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Unclean-leader-election"><span class="nav-number">3.1.</span> <span class="nav-text">Unclean leader election</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Producer端数据丢失？"><span class="nav-number">3.2.</span> <span class="nav-text">Producer端数据丢失？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#序言"><span class="nav-number">1.</span> <span class="nav-text">序言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Kafka-Offset-Rewinds"><span class="nav-number">2.</span> <span class="nav-text">Kafka Offset Rewinds</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Offset-Rewinds概念"><span class="nav-number">2.1.</span> <span class="nav-text">Offset Rewinds概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#现象review及排查"><span class="nav-number">2.2.</span> <span class="nav-text">现象review及排查</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他问题"><span class="nav-number">2.3.</span> <span class="nav-text">其他问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">2.4.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Unclean-leader-election"><span class="nav-number">3.</span> <span class="nav-text">Unclean leader election</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据安全性保证的参数"><span class="nav-number">4.</span> <span class="nav-text">数据安全性保证的参数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
           </div>
         </section>
