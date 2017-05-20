@@ -1,0 +1,740 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="流式计算,数据挖掘,Kafka Streams," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="序言好久没更新过技术博客了，上一篇的更新还是春天，转眼间帝都已然进入了夏天的节奏，这段时间恰好把Kafka Streams流式计算应用到了广告业务中，现记录下来，文章中的数据分析部分涉及公司商业信息，待老大同意再公开吧……">
+<meta property="og:type" content="article">
+<meta property="og:title" content="非粉定向建议实时数据挖掘">
+<meta property="og:url" content="https://geminiguy.github.io/2017/05/20/ctr-data-20170520/index.html">
+<meta property="og:site_name" content="隔壁老王的Blog">
+<meta property="og:description" content="序言好久没更新过技术博客了，上一篇的更新还是春天，转眼间帝都已然进入了夏天的节奏，这段时间恰好把Kafka Streams流式计算应用到了广告业务中，现记录下来，文章中的数据分析部分涉及公司商业信息，待老大同意再公开吧……">
+<meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/20170520-source-copy.jpg">
+<meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/20170520-parser.jpg">
+<meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/20170520-join.jpg">
+<meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/20170520-countby-key.jpg">
+<meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/20170520-to-redis.jpg">
+<meta property="og:image" content="http://ol7f62vwl.bkt.clouddn.com/20170520-final.jpg">
+<meta property="og:updated_time" content="2017-05-20T01:56:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="非粉定向建议实时数据挖掘">
+<meta name="twitter:description" content="序言好久没更新过技术博客了，上一篇的更新还是春天，转眼间帝都已然进入了夏天的节奏，这段时间恰好把Kafka Streams流式计算应用到了广告业务中，现记录下来，文章中的数据分析部分涉及公司商业信息，待老大同意再公开吧……">
+<meta name="twitter:image" content="http://ol7f62vwl.bkt.clouddn.com/20170520-source-copy.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6371023569551361000,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> 非粉定向建议实时数据挖掘 | 隔壁老王的Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=60402835";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">隔壁老王的Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                非粉定向建议实时数据挖掘
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-05-20T00:00:00+08:00" content="2017-05-20">
+              2017-05-20
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/05/20/ctr-data-20170520/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/20/ctr-data-20170520/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h1><p>好久没更新过技术博客了，上一篇的更新还是春天，转眼间帝都已然进入了夏天的节奏，这段时间恰好把Kafka Streams流式计算应用到了广告业务中，现记录下来，文章中的数据分析部分涉及公司商业信息，待老大同意再公开吧……</p>
+<a id="more"></a>
+<h1 id="需求背景"><a href="#需求背景" class="headerlink" title="需求背景"></a>需求背景</h1><p>目前非粉支持广告主按照二度关系、领域兴趣、指定账号粉丝三个部分进行广告投放，2017年粉条改版之后，在广告主购买高级定向包（兴趣包）时增加地域和性别维度的定向条件，实现更加多元化、精准化的流量投放，提高ECPM。为更好的指导广告主的条件定向，从而提高广告的CTR（点击率），帮助广告主提高ROI（投资回报率）。现决定以广告订单为单位实时计算各种组合条件的CTR，投放过程中或订单结束后在数据效果页进行展示，各个组合维度CTR top5，进而优化目前效果页固定的文字title~~</p>
+<h1 id="技术架构"><a href="#技术架构" class="headerlink" title="技术架构"></a>技术架构</h1><p>技术解决方案主要用到的工具如下:</p>
+<ul>
+<li>Flume: 1.7</li>
+<li>Farmer </li>
+<li>kafka_datadispatch_framework</li>
+<li>Kafka: 0.10.0.1</li>
+<li>Kafka Streams: 0.10.0.1</li>
+<li>Redis</li>
+</ul>
+<p>主要分为以下几个模块</p>
+<ul>
+<li>数据源拷贝模块</li>
+<li>数据实时计算模块</li>
+<li>数据缓存处理模块</li>
+</ul>
+<h2 id="数据源拷贝模块"><a href="#数据源拷贝模块" class="headerlink" title="数据源拷贝模块"></a>数据源拷贝模块</h2><p>由于Flume1.7的Kafka Sink用到的还是Producer 0.9的协议，无法在record中添加timestamp字段值，而后续的流式计算Streams如果没有event time则会出现异常，而目前线上的互动日志是用Flume接到Kafka的，无法直接使用，同时笔者也不想在线上集群来测试这一套技术方案，因此将线上集群的互动日志和曝光日志用kafka_datadispatch_framework进行相应处理后接到测试集群。<br><img src="http://ol7f62vwl.bkt.clouddn.com/20170520-source-copy.jpg" alt="20170520-source-copy"></p>
+<h2 id="数据实时计算模块"><a href="#数据实时计算模块" class="headerlink" title="数据实时计算模块"></a>数据实时计算模块</h2><p>其中数据实时计算模块是整个计算框架中的核心模块，数据清洗、过滤、连接、聚合等流式计算基本语义均在本模块有所体现，可见其逻辑重要性。吹完牛逼我们来看一下这一模块的技术框架图。</p>
+<h3 id="1-互动、曝光解析过滤子模块"><a href="#1-互动、曝光解析过滤子模块" class="headerlink" title="1. 互动、曝光解析过滤子模块"></a>1. 互动、曝光解析过滤子模块</h3><p><img src="http://ol7f62vwl.bkt.clouddn.com/20170520-parser.jpg" alt="20170520-parse"></p>
+<p>互动日志KStream利用map+filter解析过滤出有效非粉互动，对于曝光日志同理，输出topic及相应格式如下,(ps: 其实互动value里面很多信息并没有用到)：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">topic: wb_extendfans_pvid_bhv</div><div class="line">key: pvid</div><div class="line">value(json): </div><div class="line">&#123;</div><div class="line">  "code": "14000003",</div><div class="line">  "clktime": "1495003701",</div><div class="line">  "adid": "170503250165164982",</div><div class="line">  "pvid": "01536016988612"</div><div class="line">&#125;</div><div class="line"></div><div class="line">topic: wb_extendfans_pvid_expo</div><div class="line">key: pvid</div><div class="line">value(json): </div><div class="line">&#123;</div><div class="line">  "count": "10000",  //购买量</div><div class="line">  "adid": "170503250165164982",</div><div class="line">  "target": "2|301|20001,20002,20006",  // gender|area|fieldId</div><div class="line">  "pvid": "01536016988612"</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>由于比较懒，不想多写代码，于是乎我用到了through将wb_extendfans_pvid_expo作为一个中间输出，后面接着处理曝光数据，利用flatMap API，将上面的KStream按照兴趣码拆分成多个KStream流，方便后期进行countby key。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">topic: wb_extendfans_expo_countsource</div><div class="line">key:  adid@count@gender|area|field   // 这里field为单个码, @ 为各个字段的分隔符</div><div class="line">value: "1"  // value在这里已经不重要了</div></pre></td></tr></table></figure>
+<h3 id="2-互动join曝光子模块"><a href="#2-互动join曝光子模块" class="headerlink" title="2. 互动join曝光子模块"></a>2. 互动join曝光子模块</h3><p><img src="http://ol7f62vwl.bkt.clouddn.com/20170520-join.jpg" alt="20170520-join"></p>
+<p>接入上一个模块的两个输出源：wb_extendfans_pvid_bhv、wb_extendfans_pvid_expo做为进行join操作的两个KStream，并对field的组合继续用flatMap拆分多个数据流。最终输出topic及格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">topic: wb_extendfans_bhv_join_expo</div><div class="line">key: adid@count@gender|area|field   // 这里field为单个码, @ 为各个字段的分隔符</div><div class="line">value: &quot;1&quot;  // 其实value在这里已经不重要了</div><div class="line">JOIN_WINDOWS = 2 * 60 * 60 * 1000L //时间窗口</div></pre></td></tr></table></figure>
+<h3 id="3-聚合计算ctr子模块"><a href="#3-聚合计算ctr子模块" class="headerlink" title="3. 聚合计算ctr子模块"></a>3. 聚合计算ctr子模块</h3><p><img src="http://ol7f62vwl.bkt.clouddn.com/20170520-countby-key.jpg" alt="20170520-countby-key"></p>
+<p>首先对购买量小于1W的数据流进行过滤，之后分别对互动组合和曝光组合的数据流进行count by key聚合，其中key如图所示，value即为实时递增的总数。针对两个KTable进行实时join关联，进行实时ctr计算。<br><code>实时CTR=互动组合条件总数/曝光组合条件总数</code><br>计算结果也是一个KTable，接着用.toStream.fileter.map变为一个实时变化的KStream，方便后期入缓存处理</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">topic: extendfans_ctr_stream</div><div class="line">key: adid@gender|area|field</div><div class="line">value: 此时的ctr@此时曝光量</div></pre></td></tr></table></figure>
+<h2 id="数据缓存处理模块"><a href="#数据缓存处理模块" class="headerlink" title="数据缓存处理模块"></a>数据缓存处理模块</h2><p><img src="http://ol7f62vwl.bkt.clouddn.com/20170520-to-redis.jpg" alt="20170520-to-redis"></p>
+<p>这个模块相对于上个模块就简单太多了，利用kafka_datadispatch_framework消费extendfans_ctr_stream数据，且过滤掉此时曝光小于1000的噪声数据，实时写入redis进行存储，这里用到了redis有序集合，利用ZADD命令，写入同时可实时排序。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Redis</div><div class="line">key: adid</div><div class="line">member: 组合条件</div><div class="line">score: ctr</div></pre></td></tr></table></figure>
+<h2 id="总框架图"><a href="#总框架图" class="headerlink" title="总框架图"></a>总框架图</h2><p><img src="http://ol7f62vwl.bkt.clouddn.com/20170520-final.jpg" alt="20170520-fina"></p>
+<h1 id="数据结果分析与总结"><a href="#数据结果分析与总结" class="headerlink" title="数据结果分析与总结"></a>数据结果分析与总结</h1><h1 id="展望"><a href="#展望" class="headerlink" title="展望"></a>展望</h1>
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>兄弟，请我喝瓶营养快线？</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="http://oj5mvdqpa.bkt.clouddn.com/weixin-pay.png" alt="Gemini WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="http://oj5mvdqpa.bkt.clouddn.com/zhifubao-pay.png" alt="Gemini Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/流式计算/" rel="tag">#流式计算</a>
+          
+            <a href="/tags/数据挖掘/" rel="tag">#数据挖掘</a>
+          
+            <a href="/tags/Kafka-Streams/" rel="tag">#Kafka Streams</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/27/kafka-rewinds-data-lost/" rel="next" title="Kafka Offset倒回和数据丢失">
+                <i class="fa fa-chevron-left"></i> Kafka Offset倒回和数据丢失
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2017/05/20/ctr-data-20170520/"
+     data-title="非粉定向建议实时数据挖掘"
+     data-content=""
+     data-url="https://geminiguy.github.io/2017/05/20/ctr-data-20170520/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/05/20/ctr-data-20170520/"
+           data-title="非粉定向建议实时数据挖掘" data-url="https://geminiguy.github.io/2017/05/20/ctr-data-20170520/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg"
+               alt="Gemini" />
+          <p class="site-author-name" itemprop="name">Gemini</p>
+          <p class="site-description motion-element" itemprop="description">嘘，要发车了</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">14</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/GeminiGuy" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2509862211/" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:rockere6@163.com" target="_blank" title="Email">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>
+                  
+                  Email
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#序言"><span class="nav-number">1.</span> <span class="nav-text">序言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#需求背景"><span class="nav-number">2.</span> <span class="nav-text">需求背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#技术架构"><span class="nav-number">3.</span> <span class="nav-text">技术架构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据源拷贝模块"><span class="nav-number">3.1.</span> <span class="nav-text">数据源拷贝模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据实时计算模块"><span class="nav-number">3.2.</span> <span class="nav-text">数据实时计算模块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-互动、曝光解析过滤子模块"><span class="nav-number">3.2.1.</span> <span class="nav-text">1. 互动、曝光解析过滤子模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-互动join曝光子模块"><span class="nav-number">3.2.2.</span> <span class="nav-text">2. 互动join曝光子模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-聚合计算ctr子模块"><span class="nav-number">3.2.3.</span> <span class="nav-text">3. 聚合计算ctr子模块</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据缓存处理模块"><span class="nav-number">3.3.</span> <span class="nav-text">数据缓存处理模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总框架图"><span class="nav-number">3.4.</span> <span class="nav-text">总框架图</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据结果分析与总结"><span class="nav-number">4.</span> <span class="nav-text">数据结果分析与总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#展望"><span class="nav-number">5.</span> <span class="nav-text">展望</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Gemini</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"geminiguy"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js"></script>
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>
