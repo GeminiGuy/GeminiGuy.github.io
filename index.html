@@ -5,10 +5,10 @@
   
 
 
-<html class="theme-next mist use-motion">
+<html class="theme-next mist use-motion" lang="zh-Hans">
 <head>
   <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 
 
@@ -29,7 +29,7 @@
 
   
   
-  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
 
 
 
@@ -63,7 +63,7 @@
 
 
 
-<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
 
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
@@ -96,19 +96,33 @@
 
 
 
-<script type="text/javascript" id="hexo.configuration">
+<script type="text/javascript" id="hexo.configurations">
   var NexT = window.NexT || {};
   var CONFIG = {
+    root: '/',
     scheme: 'Mist',
     sidebar: {"position":"right","display":"post"},
     fancybox: true,
     motion: true,
     duoshuo: {
-      userId: 6371023569551361000,
+      userId: 'undefined',
       author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
     }
   };
 </script>
+
+
+
+
+
+
 
   <title> 隔壁老王的Blog </title>
 </head>
@@ -221,6 +235,8 @@
   
 </nav>
 
+
+
  </div>
     </header>
 
@@ -234,13 +250,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/05/21/2017-05-21/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Gemini">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="隔壁老王的Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="隔壁老王的Blog" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -262,45 +291,17 @@
 
         <div class="post-meta">
           <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-05-21T00:00:00+08:00" content="2017-05-21">
-              2017-05-21
-            </time>
+            
+
+            
+
+            
           </span>
 
           
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/闲聊/" itemprop="url" rel="index">
-                    <span itemprop="name">闲聊</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
 
           
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2017/05/21/2017-05-21/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/05/21/2017-05-21/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
           
 
           
@@ -309,6 +310,9 @@
           
 
           
+
+          
+
         </div>
       </header>
     
@@ -324,11 +328,13 @@
           <blockquote>
 <p>好久没打生活卡了，北京这天越来越热了，躁动，多说6.1号要关闭了啊，抓紧换个评论系统……</p>
 </blockquote>
+          <!--noindex-->
           <div class="post-more-link text-center">
             <a class="btn" href="/2017/05/21/2017-05-21/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
+          <!--/noindex-->
         
       
     </div>
@@ -340,6 +346,7 @@
     <div>
       
     </div>
+
 
     <footer class="post-footer">
       
@@ -358,13 +365,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/05/20/ctr-data-20170520/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Gemini">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="隔壁老王的Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="隔壁老王的Blog" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -386,45 +406,17 @@
 
         <div class="post-meta">
           <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-05-20T00:00:00+08:00" content="2017-05-20">
-              2017-05-20
-            </time>
+            
+
+            
+
+            
           </span>
 
           
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术/" itemprop="url" rel="index">
-                    <span itemprop="name">技术</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
 
           
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2017/05/20/ctr-data-20170520/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/05/20/ctr-data-20170520/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
           
 
           
@@ -433,6 +425,9 @@
           
 
           
+
+          
+
         </div>
       </header>
     
@@ -446,11 +441,13 @@
       
         
           <h1 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h1><p>好久没更新过技术博客了，上一篇的更新还是春天，转眼间帝都已然进入了夏天的节奏，这段时间恰好把Kafka Streams流式计算应用到了广告业务中，现记录下来，文章中的数据分析部分涉及公司商业信息，待老大同意再公开吧……</p>
+          <!--noindex-->
           <div class="post-more-link text-center">
             <a class="btn" href="/2017/05/20/ctr-data-20170520/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
+          <!--/noindex-->
         
       
     </div>
@@ -462,6 +459,7 @@
     <div>
       
     </div>
+
 
     <footer class="post-footer">
       
@@ -480,13 +478,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/04/27/kafka-rewinds-data-lost/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Gemini">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="隔壁老王的Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="隔壁老王的Blog" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -508,45 +519,17 @@
 
         <div class="post-meta">
           <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-04-27T00:00:00+08:00" content="2017-04-27">
-              2017-04-27
-            </time>
+            
+
+            
+
+            
           </span>
 
           
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术/" itemprop="url" rel="index">
-                    <span itemprop="name">技术</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
 
           
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2017/04/27/kafka-rewinds-data-lost/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/04/27/kafka-rewinds-data-lost/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
           
 
           
@@ -555,6 +538,9 @@
           
 
           
+
+          
+
         </div>
       </header>
     
@@ -568,11 +554,13 @@
       
         
           <h1 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h1><p>　　本文为之前的一篇文章的更新，写完一直没挂到博客上，现直接顶到最新日期吧。之前看过的客官请直接忽略。<br>
+          <!--noindex-->
           <div class="post-more-link text-center">
             <a class="btn" href="/2017/04/27/kafka-rewinds-data-lost/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
+          <!--/noindex-->
         
       
     </div>
@@ -584,6 +572,7 @@
     <div>
       
     </div>
+
 
     <footer class="post-footer">
       
@@ -602,13 +591,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/03/26/20170326/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Gemini">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="隔壁老王的Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="隔壁老王的Blog" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -630,45 +632,17 @@
 
         <div class="post-meta">
           <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-03-26T00:00:00+08:00" content="2017-03-26">
-              2017-03-26
-            </time>
+            
+
+            
+
+            
           </span>
 
           
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/闲聊/" itemprop="url" rel="index">
-                    <span itemprop="name">闲聊</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
 
           
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2017/03/26/20170326/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/03/26/20170326/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
           
 
           
@@ -677,6 +651,9 @@
           
 
           
+
+          
+
         </div>
       </header>
     
@@ -691,11 +668,13 @@
         
           <blockquote>
 <p>哔，照常打卡……<br>
+          <!--noindex-->
           <div class="post-more-link text-center">
             <a class="btn" href="/2017/03/26/20170326/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
+          <!--/noindex-->
         
       
     </div>
@@ -707,6 +686,7 @@
     <div>
       
     </div>
+
 
     <footer class="post-footer">
       
@@ -725,13 +705,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/03/19/20170319/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Gemini">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="隔壁老王的Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="隔壁老王的Blog" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -753,45 +746,17 @@
 
         <div class="post-meta">
           <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-03-19T00:00:00+08:00" content="2017-03-19">
-              2017-03-19
-            </time>
+            
+
+            
+
+            
           </span>
 
           
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/闲聊/" itemprop="url" rel="index">
-                    <span itemprop="name">闲聊</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
 
           
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2017/03/19/20170319/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/03/19/20170319/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
           
 
           
@@ -800,6 +765,9 @@
           
 
           
+
+          
+
         </div>
       </header>
     
@@ -814,11 +782,13 @@
         
           <blockquote>
 <p>调整生活习惯及作息，防过敏……<br>
+          <!--noindex-->
           <div class="post-more-link text-center">
             <a class="btn" href="/2017/03/19/20170319/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
+          <!--/noindex-->
         
       
     </div>
@@ -830,6 +800,7 @@
     <div>
       
     </div>
+
 
     <footer class="post-footer">
       
@@ -848,13 +819,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/03/12/20170312/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Gemini">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="隔壁老王的Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="隔壁老王的Blog" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -876,45 +860,17 @@
 
         <div class="post-meta">
           <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-03-12T00:00:00+08:00" content="2017-03-12">
-              2017-03-12
-            </time>
+            
+
+            
+
+            
           </span>
 
           
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/闲聊/" itemprop="url" rel="index">
-                    <span itemprop="name">闲聊</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
 
           
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2017/03/12/20170312/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/03/12/20170312/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
           
 
           
@@ -923,6 +879,9 @@
           
 
           
+
+          
+
         </div>
       </header>
     
@@ -938,11 +897,13 @@
           <blockquote>
 <p>毫无营养的周末流水账</p>
 </blockquote>
+          <!--noindex-->
           <div class="post-more-link text-center">
             <a class="btn" href="/2017/03/12/20170312/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
+          <!--/noindex-->
         
       
     </div>
@@ -954,6 +915,7 @@
     <div>
       
     </div>
+
 
     <footer class="post-footer">
       
@@ -972,13 +934,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/03/05/kafka-talk/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Gemini">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="隔壁老王的Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="隔壁老王的Blog" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -1000,45 +975,17 @@
 
         <div class="post-meta">
           <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-03-05T00:00:00+08:00" content="2017-03-05">
-              2017-03-05
-            </time>
+            
+
+            
+
+            
           </span>
 
           
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术/" itemprop="url" rel="index">
-                    <span itemprop="name">技术</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
 
           
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2017/03/05/kafka-talk/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/03/05/kafka-talk/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
           
 
           
@@ -1047,6 +994,9 @@
           
 
           
+
+          
+
         </div>
       </header>
     
@@ -1060,11 +1010,13 @@
       
         
           <h1 id="序"><a href="#序" class="headerlink" title="序"></a>序</h1><p>使用Kafka也有几个月的时间，然而期间出现了一件怪事儿，背后隐藏着怎样的惊天秘密呢？看完以后倒吸一口凉气，令人不解，男默女泪~~ （ps：uc体实在编不下去了，逃<br>
+          <!--noindex-->
           <div class="post-more-link text-center">
             <a class="btn" href="/2017/03/05/kafka-talk/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1076,6 +1028,7 @@
     <div>
       
     </div>
+
 
     <footer class="post-footer">
       
@@ -1094,13 +1047,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/03/04/jinganglang3-Logan/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Gemini">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="隔壁老王的Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="隔壁老王的Blog" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -1122,45 +1088,17 @@
 
         <div class="post-meta">
           <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-03-04T00:00:00+08:00" content="2017-03-04">
-              2017-03-04
-            </time>
+            
+
+            
+
+            
           </span>
 
           
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/电影/" itemprop="url" rel="index">
-                    <span itemprop="name">电影</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
 
           
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2017/03/04/jinganglang3-Logan/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/03/04/jinganglang3-Logan/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
           
 
           
@@ -1169,6 +1107,9 @@
           
 
           
+
+          
+
         </div>
       </header>
     
@@ -1185,11 +1126,13 @@
 <blockquote>
 <p>英雄迟暮，X时代的终结</p>
 </blockquote>
+          <!--noindex-->
           <div class="post-more-link text-center">
             <a class="btn" href="/2017/03/04/jinganglang3-Logan/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1201,6 +1144,7 @@
     <div>
       
     </div>
+
 
     <footer class="post-footer">
       
@@ -1219,13 +1163,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/02/26/周末瞎扯淡/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Gemini">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="隔壁老王的Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="隔壁老王的Blog" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -1247,45 +1204,17 @@
 
         <div class="post-meta">
           <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-02-26T00:00:00+08:00" content="2017-02-26">
-              2017-02-26
-            </time>
+            
+
+            
+
+            
           </span>
 
           
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/闲聊/" itemprop="url" rel="index">
-                    <span itemprop="name">闲聊</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
 
           
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2017/02/26/周末瞎扯淡/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/02/26/周末瞎扯淡/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
           
 
           
@@ -1294,6 +1223,9 @@
           
 
           
+
+          
+
         </div>
       </header>
     
@@ -1307,11 +1239,13 @@
       
         
           <h1 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h1><p>周末瞎扯淡，记个流水账。<br>
+          <!--noindex-->
           <div class="post-more-link text-center">
             <a class="btn" href="/2017/02/26/周末瞎扯淡/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1323,6 +1257,7 @@
     <div>
       
     </div>
+
 
     <footer class="post-footer">
       
@@ -1341,13 +1276,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/02/19/kafka-controller-makeLeader&Follower/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Gemini">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="隔壁老王的Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="隔壁老王的Blog" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -1369,45 +1317,17 @@
 
         <div class="post-meta">
           <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-02-19T00:00:00+08:00" content="2017-02-19">
-              2017-02-19
-            </time>
+            
+
+            
+
+            
           </span>
 
           
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术/" itemprop="url" rel="index">
-                    <span itemprop="name">技术</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
 
           
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2017/02/19/kafka-controller-makeLeader&Follower/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/02/19/kafka-controller-makeLeader&Follower/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
           
 
           
@@ -1416,6 +1336,9 @@
           
 
           
+
+          
+
         </div>
       </header>
     
@@ -1432,11 +1355,13 @@
 <p>阳光明美日，正是填坑时</p>
 </blockquote>
 <p>　　之前有一篇Kafka Controller的文章中，对于RelicaManager的makeLeaders、makeFollowers方法具体实现逻辑留了一个坑，时隔好久，回来把这个坑补上，其中参考了0.10版本的scala源码以及两篇博客，最后参考文献中会有注明。<br>
+          <!--noindex-->
           <div class="post-more-link text-center">
             <a class="btn" href="/2017/02/19/kafka-controller-makeLeader&Follower/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1448,6 +1373,7 @@
     <div>
       
     </div>
+
 
     <footer class="post-footer">
       
@@ -1497,7 +1423,7 @@
 
       
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel sidebar-panel-active">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg"
@@ -1574,6 +1500,9 @@
         
         
 
+        
+
+
       </section>
 
       
@@ -1598,16 +1527,7 @@
   <span class="author" itemprop="copyrightHolder">Gemini</span>
 </div>
 
-<div class="powered-by">
-  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
-</div>
 
-<div class="theme-info">
-  主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Mist
-  </a>
-</div>
 
         
 
@@ -1641,22 +1561,22 @@
 
 
   
-  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
 
   
-  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
 
   
-  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
 
   
-  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
 
   
-  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
 
   
-  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
 
 
   
@@ -1686,34 +1606,25 @@
 
   
 
-    <script type="text/javascript">
-      var disqus_shortname = 'laowang';
-      var disqus_identifier = 'index.html';
-      var disqus_title = '';
-      var disqus_url = '';
-
-      function run_disqus_script(disqus_script){
-        var dsq = document.createElement('script');
-        dsq.type = 'text/javascript';
-        dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-      }
-
-      run_disqus_script('count.js');
-      
-    </script>
-  
 
 
 
-  
+	
+
+
+
+
   
   
 
   
 
   
+
+  
+
+  
+
 
 </body>
 </html>

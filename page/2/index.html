@@ -5,10 +5,10 @@
   
 
 
-<html class="theme-next mist use-motion">
+<html class="theme-next mist use-motion" lang="zh-Hans">
 <head>
   <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 
 
@@ -29,7 +29,7 @@
 
   
   
-  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
 
 
 
@@ -63,7 +63,7 @@
 
 
 
-<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
 
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
@@ -96,19 +96,33 @@
 
 
 
-<script type="text/javascript" id="hexo.configuration">
+<script type="text/javascript" id="hexo.configurations">
   var NexT = window.NexT || {};
   var CONFIG = {
+    root: '/',
     scheme: 'Mist',
     sidebar: {"position":"right","display":"post"},
     fancybox: true,
     motion: true,
     duoshuo: {
-      userId: 6371023569551361000,
+      userId: 'undefined',
       author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
     }
   };
 </script>
+
+
+
+
+
+
 
   <title> 隔壁老王的Blog </title>
 </head>
@@ -221,6 +235,8 @@
   
 </nav>
 
+
+
  </div>
     </header>
 
@@ -234,13 +250,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/02/18/Note-20170218/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Gemini">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="隔壁老王的Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="隔壁老王的Blog" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -262,45 +291,17 @@
 
         <div class="post-meta">
           <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-02-18T00:00:00+08:00" content="2017-02-18">
-              2017-02-18
-            </time>
+            
+
+            
+
+            
           </span>
 
           
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/闲聊/" itemprop="url" rel="index">
-                    <span itemprop="name">闲聊</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
 
           
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2017/02/18/Note-20170218/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/02/18/Note-20170218/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
           
 
           
@@ -309,6 +310,9 @@
           
 
           
+
+          
+
         </div>
       </header>
     
@@ -322,11 +326,13 @@
       
         
           <h1 id="杂记壹"><a href="#杂记壹" class="headerlink" title="杂记壹"></a>杂记壹</h1><p>　　回顾这一周，好像都在应付各种小项目开发，粉条2017年改版大项目启动，设计评审会加各种对接口格式又是两天的时间。用来学习基础jvm知识的时间大大被压榨，买的《人类简史》和《未来简史》也沉睡了好几天。However，最重要的是，我的锅也沉睡许久，是时候唤醒它了~~<br>　　之前设想的是每周都学做一道新菜，不仅是因为我司食堂太难吃，也是让自己的码农生活不要过得太屌丝吧，多一些正能量，或许就成了程序猿界的“厨神”了呢？😁周六早上反而睡不久了，于是乎起床买菜，在超市里看到了新鲜的湿面，这是个悲剧的前戏……</p>
+          <!--noindex-->
           <div class="post-more-link text-center">
             <a class="btn" href="/2017/02/18/Note-20170218/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
+          <!--/noindex-->
         
       
     </div>
@@ -338,6 +344,7 @@
     <div>
       
     </div>
+
 
     <footer class="post-footer">
       
@@ -356,13 +363,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/02/12/ckestrel框架浅析/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Gemini">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="隔壁老王的Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="隔壁老王的Blog" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -384,45 +404,17 @@
 
         <div class="post-meta">
           <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-02-12T00:00:00+08:00" content="2017-02-12">
-              2017-02-12
-            </time>
+            
+
+            
+
+            
           </span>
 
           
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术/" itemprop="url" rel="index">
-                    <span itemprop="name">技术</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
 
           
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2017/02/12/ckestrel框架浅析/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/02/12/ckestrel框架浅析/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
           
 
           
@@ -431,6 +423,9 @@
           
 
           
+
+          
+
         </div>
       </header>
     
@@ -444,11 +439,13 @@
       
         
           <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>　　Kestrel是一个利用Scala语言编写的轻量级消息队列，由Twitter团队开源，其支持三种协议：memcache、thrift、text。Kestrel具有高性能、代码轻量级、持久存储（记录读写日志到journal）、可靠性（支持可靠获取）等优点。而本文所要说的Ckestrel是Kestrel的C++版本，由团队的老前辈改版而成，采用的协议是memcached文本协议。由于吞吐量、稳定性、代码维护性等等原因满足不了业务需求，因此逐步会被Kafka取而代之。这篇文章是我15年刚入职那会调研学习这个框架的源码所写的wiki，现照搬到我的博客上面。本文将对Ckestrel的线程模型及状态机、持久化日志和可靠性读取机制等方面做相关分析。<br>
+          <!--noindex-->
           <div class="post-more-link text-center">
             <a class="btn" href="/2017/02/12/ckestrel框架浅析/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
+          <!--/noindex-->
         
       
     </div>
@@ -460,6 +457,7 @@
     <div>
       
     </div>
+
 
     <footer class="post-footer">
       
@@ -478,13 +476,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/02/05/2016-movie/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Gemini">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="隔壁老王的Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="隔壁老王的Blog" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -506,45 +517,17 @@
 
         <div class="post-meta">
           <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-02-05T11:33:43+08:00" content="2017-02-05">
-              2017-02-05
-            </time>
+            
+
+            
+
+            
           </span>
 
           
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/电影/" itemprop="url" rel="index">
-                    <span itemprop="name">电影</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
 
           
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2017/02/05/2016-movie/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/02/05/2016-movie/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
           
 
           
@@ -553,6 +536,9 @@
           
 
           
+
+          
+
         </div>
       </header>
     
@@ -570,11 +556,13 @@
 <p>There are a thousand Hamlets in a thousand people’s eyes. —William Shakespeare</p>
 </blockquote>
 <p>　　老莎说过，一千个人眼里就有一千个哈姆雷特。每个人都有自己喜欢的电影类型，这两年豆瓣上不乏“哈韩党”、“文艺装逼党”，高分的电影未必符合大众的审美，不一定好看。当然低分的国产电影，您也无需恼火，就像春节档上映的《西游伏妖篇》，特效还算不错，笑点还算凑合，虽然剧情烂了点，但是春节带着大朋友、小朋友们一起看看这种无厘头电影，乐呵乐呵，也是一种不错的体验，何况星爷是一位好的演员，但是从来也没有被承认过是一位好的导演和编剧。看到微博、豆瓣上面对这个片的好坏争得面红耳赤，真没这个必要。目前国内导演不是拍不出好的电影，而是意识形态所决定的，也不能全怨光腚总局，这个知乎好像有过讨论。况且你造每年美帝和棒子国也生产出很多烂片么？好片毕竟是少数。大家都这么忙，选自己喜欢的电影去消磨时间就OK啦，何必咸吃萝卜淡操心，人家吃你家一粒米啦？呵呵。哎，有点扯远了，下面就来聊聊老王眼中的2016年电影之最。<br>
+          <!--noindex-->
           <div class="post-more-link text-center">
             <a class="btn" href="/2017/02/05/2016-movie/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
+          <!--/noindex-->
         
       
     </div>
@@ -586,6 +574,7 @@
     <div>
       
     </div>
+
 
     <footer class="post-footer">
       
@@ -604,13 +593,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/01/13/Kafka-Controller/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Gemini">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="隔壁老王的Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="隔壁老王的Blog" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -632,45 +634,17 @@
 
         <div class="post-meta">
           <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-01-13T00:00:00+08:00" content="2017-01-13">
-              2017-01-13
-            </time>
+            
+
+            
+
+            
           </span>
 
           
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术/" itemprop="url" rel="index">
-                    <span itemprop="name">技术</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
 
           
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2017/01/13/Kafka-Controller/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/01/13/Kafka-Controller/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
           
 
           
@@ -679,6 +653,9 @@
           
 
           
+
+          
+
         </div>
       </header>
     
@@ -692,11 +669,13 @@
       
         
           <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>目前网上针对Kafka Controller的分析文章不算少，但是大多比较散乱，不够系统，因此趁着这次部门分享Kafka的机会，将一些知识点进行了梳理总结，学习过程中参考了一些原理性的分析文章和0.10版本的源码。本文埋了一些细节坑，待有时间再回来补全吧。对于Kafka的研究水平有限，如果文章中出现错误，还望在评论区交流指正，谢谢。下面我们首先从基础概念开始讲起。</p>
+          <!--noindex-->
           <div class="post-more-link text-center">
             <a class="btn" href="/2017/01/13/Kafka-Controller/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
+          <!--/noindex-->
         
       
     </div>
@@ -708,6 +687,7 @@
     <div>
       
     </div>
+
 
     <footer class="post-footer">
       
@@ -726,13 +706,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/01/01/index/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Gemini">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="隔壁老王的Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="隔壁老王的Blog" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -754,45 +747,17 @@
 
         <div class="post-meta">
           <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-01-01T00:00:00+08:00" content="2017-01-01">
-              2017-01-01
-            </time>
+            
+
+            
+
+            
           </span>
 
           
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/闲聊/" itemprop="url" rel="index">
-                    <span itemprop="name">闲聊</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
 
           
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2017/01/01/index/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/01/01/index/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
           
 
           
@@ -801,6 +766,9 @@
           
 
           
+
+          
+
         </div>
       </header>
     
@@ -828,6 +796,7 @@
     <div>
       
     </div>
+
 
     <footer class="post-footer">
       
@@ -877,7 +846,7 @@
 
       
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel sidebar-panel-active">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg"
@@ -954,6 +923,9 @@
         
         
 
+        
+
+
       </section>
 
       
@@ -978,16 +950,7 @@
   <span class="author" itemprop="copyrightHolder">Gemini</span>
 </div>
 
-<div class="powered-by">
-  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
-</div>
 
-<div class="theme-info">
-  主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Mist
-  </a>
-</div>
 
         
 
@@ -1021,22 +984,22 @@
 
 
   
-  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
 
   
-  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
 
   
-  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
 
   
-  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
 
   
-  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
 
   
-  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
 
 
   
@@ -1066,34 +1029,25 @@
 
   
 
-    <script type="text/javascript">
-      var disqus_shortname = 'laowang';
-      var disqus_identifier = 'page/2/index.html';
-      var disqus_title = '';
-      var disqus_url = '';
-
-      function run_disqus_script(disqus_script){
-        var dsq = document.createElement('script');
-        dsq.type = 'text/javascript';
-        dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-      }
-
-      run_disqus_script('count.js');
-      
-    </script>
-  
 
 
 
-  
+	
+
+
+
+
   
   
 
   
 
   
+
+  
+
+  
+
 
 </body>
 </html>
