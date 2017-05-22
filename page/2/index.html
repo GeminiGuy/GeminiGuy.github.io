@@ -13,8 +13,14 @@
 
 
 
+
+
+
 <meta http-equiv="Cache-Control" content="no-transform" />
 <meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
 
 
 
@@ -65,7 +71,7 @@
 
 <link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
 
-<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
   <meta name="keywords" content="Hexo, NexT" />
@@ -77,7 +83,7 @@
 
 
 
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
 
 
 
@@ -101,30 +107,32 @@
   var CONFIG = {
     root: '/',
     scheme: 'Mist',
-    sidebar: {"position":"right","display":"post"},
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
     fancybox: true,
     motion: true,
     duoshuo: {
-      userId: 'undefined',
+      userId: '0',
       author: '博主'
     },
     algolia: {
       applicationID: '',
       apiKey: '',
       indexName: '',
-      hits: "",
-      labels: ""
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
     }
   };
 </script>
 
 
 
+  <link rel="canonical" href="https://geminiguy.github.io/page/2/"/>
 
 
 
 
-  <title> 隔壁老王的Blog </title>
+
+  <title>隔壁老王的Blog</title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -135,14 +143,10 @@
 
 
 
-  <script type="text/javascript">
-    (function() {
-      var hm = document.createElement("script");
-      hm.src = "//tajs.qq.com/stats?sId=60402835";
-      var s = document.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(hm, s);
-    })();
-  </script>
+
+
+
+
 
 
 
@@ -154,31 +158,35 @@
     
   
 
-  <div class="container one-collumn sidebar-position-right 
+  <div class="container sidebar-position-right 
    page-home 
  ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-meta ">
-  
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
 
-  <div class="custom-logo-site-title">
-    <a href="/"  class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <span class="site-title">隔壁老王的Blog</span>
-      <span class="logo-line-after"><i></i></span>
-    </a>
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">隔壁老王的Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
   </div>
-  <p class="site-subtitle"></p>
-</div>
 
-<div class="site-nav-toggle">
-  <button>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-  </button>
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
 </div>
 
 <nav class="site-nav">
@@ -256,20 +264,17 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/02/18/Note-20170218/">
+    <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/02/18/Note-20170218/">
 
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Gemini">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="隔壁老王的Blog">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="隔壁老王的Blog" src="">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Gemini">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
     </span>
-  </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="隔壁老王的Blog">
+    </span>
 
     
       <header class="post-header">
@@ -277,20 +282,22 @@
         
         
           <h1 class="post-title" itemprop="name headline">
-            
-            
-              
                 
-                <a class="post-title-link" href="/2017/02/18/Note-20170218/" itemprop="url">
-                  周六杂记—壹贰叁
-                </a>
-              
-            
-          </h1>
+                <a class="post-title-link" href="/2017/02/18/Note-20170218/" itemprop="url">周六杂记—壹贰叁</a></h1>
         
 
         <div class="post-meta">
           <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-18T00:00:00+08:00">
+                2017-02-18
+              </time>
             
 
             
@@ -299,14 +306,36 @@
           </span>
 
           
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/闲聊/" itemprop="url" rel="index">
+                    <span itemprop="name">闲聊</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
           
 
           
-
           
+
           
 
           
@@ -317,7 +346,6 @@
       </header>
     
 
-
     <div class="post-body" itemprop="articleBody">
 
       
@@ -327,7 +355,7 @@
         
           <h1 id="杂记壹"><a href="#杂记壹" class="headerlink" title="杂记壹"></a>杂记壹</h1><p>　　回顾这一周，好像都在应付各种小项目开发，粉条2017年改版大项目启动，设计评审会加各种对接口格式又是两天的时间。用来学习基础jvm知识的时间大大被压榨，买的《人类简史》和《未来简史》也沉睡了好几天。However，最重要的是，我的锅也沉睡许久，是时候唤醒它了~~<br>　　之前设想的是每周都学做一道新菜，不仅是因为我司食堂太难吃，也是让自己的码农生活不要过得太屌丝吧，多一些正能量，或许就成了程序猿界的“厨神”了呢？😁周六早上反而睡不久了，于是乎起床买菜，在超市里看到了新鲜的湿面，这是个悲剧的前戏……</p>
           <!--noindex-->
-          <div class="post-more-link text-center">
+          <div class="post-button text-center">
             <a class="btn" href="/2017/02/18/Note-20170218/#more" rel="contents">
               阅读全文 &raquo;
             </a>
@@ -345,8 +373,13 @@
       
     </div>
 
+    <div>
+      
+    </div>
 
     <footer class="post-footer">
+      
+
       
 
       
@@ -369,20 +402,17 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/02/12/ckestrel框架浅析/">
+    <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/02/12/ckestrel框架浅析/">
 
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Gemini">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="隔壁老王的Blog">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="隔壁老王的Blog" src="">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Gemini">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
     </span>
-  </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="隔壁老王的Blog">
+    </span>
 
     
       <header class="post-header">
@@ -390,20 +420,22 @@
         
         
           <h1 class="post-title" itemprop="name headline">
-            
-            
-              
                 
-                <a class="post-title-link" href="/2017/02/12/ckestrel框架浅析/" itemprop="url">
-                  Ckestrel框架浅析
-                </a>
-              
-            
-          </h1>
+                <a class="post-title-link" href="/2017/02/12/ckestrel框架浅析/" itemprop="url">Ckestrel框架浅析</a></h1>
         
 
         <div class="post-meta">
           <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-12T00:00:00+08:00">
+                2017-02-12
+              </time>
             
 
             
@@ -412,14 +444,36 @@
           </span>
 
           
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
           
 
           
-
           
+
           
 
           
@@ -430,7 +484,6 @@
       </header>
     
 
-
     <div class="post-body" itemprop="articleBody">
 
       
@@ -440,7 +493,7 @@
         
           <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>　　Kestrel是一个利用Scala语言编写的轻量级消息队列，由Twitter团队开源，其支持三种协议：memcache、thrift、text。Kestrel具有高性能、代码轻量级、持久存储（记录读写日志到journal）、可靠性（支持可靠获取）等优点。而本文所要说的Ckestrel是Kestrel的C++版本，由团队的老前辈改版而成，采用的协议是memcached文本协议。由于吞吐量、稳定性、代码维护性等等原因满足不了业务需求，因此逐步会被Kafka取而代之。这篇文章是我15年刚入职那会调研学习这个框架的源码所写的wiki，现照搬到我的博客上面。本文将对Ckestrel的线程模型及状态机、持久化日志和可靠性读取机制等方面做相关分析。<br>
           <!--noindex-->
-          <div class="post-more-link text-center">
+          <div class="post-button text-center">
             <a class="btn" href="/2017/02/12/ckestrel框架浅析/#more" rel="contents">
               阅读全文 &raquo;
             </a>
@@ -458,8 +511,13 @@
       
     </div>
 
+    <div>
+      
+    </div>
 
     <footer class="post-footer">
+      
+
       
 
       
@@ -482,20 +540,17 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/02/05/2016-movie/">
+    <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/02/05/2016-movie/">
 
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Gemini">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="隔壁老王的Blog">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="隔壁老王的Blog" src="">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Gemini">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
     </span>
-  </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="隔壁老王的Blog">
+    </span>
 
     
       <header class="post-header">
@@ -503,20 +558,22 @@
         
         
           <h1 class="post-title" itemprop="name headline">
-            
-            
-              
                 
-                <a class="post-title-link" href="/2017/02/05/2016-movie/" itemprop="url">
-                  我眼中的2016年电影之最
-                </a>
-              
-            
-          </h1>
+                <a class="post-title-link" href="/2017/02/05/2016-movie/" itemprop="url">我眼中的2016年电影之最</a></h1>
         
 
         <div class="post-meta">
           <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-05T11:33:43+08:00">
+                2017-02-05
+              </time>
             
 
             
@@ -525,14 +582,36 @@
           </span>
 
           
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/电影/" itemprop="url" rel="index">
+                    <span itemprop="name">电影</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
           
 
           
-
           
+
           
 
           
@@ -542,7 +621,6 @@
         </div>
       </header>
     
-
 
     <div class="post-body" itemprop="articleBody">
 
@@ -557,7 +635,7 @@
 </blockquote>
 <p>　　老莎说过，一千个人眼里就有一千个哈姆雷特。每个人都有自己喜欢的电影类型，这两年豆瓣上不乏“哈韩党”、“文艺装逼党”，高分的电影未必符合大众的审美，不一定好看。当然低分的国产电影，您也无需恼火，就像春节档上映的《西游伏妖篇》，特效还算不错，笑点还算凑合，虽然剧情烂了点，但是春节带着大朋友、小朋友们一起看看这种无厘头电影，乐呵乐呵，也是一种不错的体验，何况星爷是一位好的演员，但是从来也没有被承认过是一位好的导演和编剧。看到微博、豆瓣上面对这个片的好坏争得面红耳赤，真没这个必要。目前国内导演不是拍不出好的电影，而是意识形态所决定的，也不能全怨光腚总局，这个知乎好像有过讨论。况且你造每年美帝和棒子国也生产出很多烂片么？好片毕竟是少数。大家都这么忙，选自己喜欢的电影去消磨时间就OK啦，何必咸吃萝卜淡操心，人家吃你家一粒米啦？呵呵。哎，有点扯远了，下面就来聊聊老王眼中的2016年电影之最。<br>
           <!--noindex-->
-          <div class="post-more-link text-center">
+          <div class="post-button text-center">
             <a class="btn" href="/2017/02/05/2016-movie/#more" rel="contents">
               阅读全文 &raquo;
             </a>
@@ -575,8 +653,13 @@
       
     </div>
 
+    <div>
+      
+    </div>
 
     <footer class="post-footer">
+      
+
       
 
       
@@ -599,20 +682,17 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/01/13/Kafka-Controller/">
+    <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/01/13/Kafka-Controller/">
 
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Gemini">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="隔壁老王的Blog">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="隔壁老王的Blog" src="">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Gemini">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
     </span>
-  </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="隔壁老王的Blog">
+    </span>
 
     
       <header class="post-header">
@@ -620,20 +700,22 @@
         
         
           <h1 class="post-title" itemprop="name headline">
-            
-            
-              
                 
-                <a class="post-title-link" href="/2017/01/13/Kafka-Controller/" itemprop="url">
-                  Kafka Controller
-                </a>
-              
-            
-          </h1>
+                <a class="post-title-link" href="/2017/01/13/Kafka-Controller/" itemprop="url">Kafka Controller</a></h1>
         
 
         <div class="post-meta">
           <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-13T00:00:00+08:00">
+                2017-01-13
+              </time>
             
 
             
@@ -642,14 +724,36 @@
           </span>
 
           
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
           
 
           
-
           
+
           
 
           
@@ -660,7 +764,6 @@
       </header>
     
 
-
     <div class="post-body" itemprop="articleBody">
 
       
@@ -670,7 +773,7 @@
         
           <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>目前网上针对Kafka Controller的分析文章不算少，但是大多比较散乱，不够系统，因此趁着这次部门分享Kafka的机会，将一些知识点进行了梳理总结，学习过程中参考了一些原理性的分析文章和0.10版本的源码。本文埋了一些细节坑，待有时间再回来补全吧。对于Kafka的研究水平有限，如果文章中出现错误，还望在评论区交流指正，谢谢。下面我们首先从基础概念开始讲起。</p>
           <!--noindex-->
-          <div class="post-more-link text-center">
+          <div class="post-button text-center">
             <a class="btn" href="/2017/01/13/Kafka-Controller/#more" rel="contents">
               阅读全文 &raquo;
             </a>
@@ -688,8 +791,13 @@
       
     </div>
 
+    <div>
+      
+    </div>
 
     <footer class="post-footer">
+      
+
       
 
       
@@ -712,20 +820,17 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/01/01/index/">
+    <link itemprop="mainEntityOfPage" href="https://geminiguy.github.io/2017/01/01/index/">
 
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Gemini">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="隔壁老王的Blog">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="隔壁老王的Blog" src="">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Gemini">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg">
     </span>
-  </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="隔壁老王的Blog">
+    </span>
 
     
       <header class="post-header">
@@ -733,20 +838,22 @@
         
         
           <h1 class="post-title" itemprop="name headline">
-            
-            
-              
                 
-                <a class="post-title-link" href="/2017/01/01/index/" itemprop="url">
-                  Hello World
-                </a>
-              
-            
-          </h1>
+                <a class="post-title-link" href="/2017/01/01/index/" itemprop="url">Hello World</a></h1>
         
 
         <div class="post-meta">
           <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-01T00:00:00+08:00">
+                2017-01-01
+              </time>
             
 
             
@@ -755,14 +862,36 @@
           </span>
 
           
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/闲聊/" itemprop="url" rel="index">
+                    <span itemprop="name">闲聊</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
           
 
           
-
           
+
           
 
           
@@ -772,7 +901,6 @@
         </div>
       </header>
     
-
 
     <div class="post-body" itemprop="articleBody">
 
@@ -797,8 +925,13 @@
       
     </div>
 
+    <div>
+      
+    </div>
 
     <footer class="post-footer">
+      
+
       
 
       
@@ -852,19 +985,26 @@
                src="http://oj5mvdqpa.bkt.clouddn.com/gemini.jpeg"
                alt="Gemini" />
           <p class="site-author-name" itemprop="name">Gemini</p>
-          <p class="site-description motion-element" itemprop="description">嘘，要发车了</p>
+           
+              <p class="site-description motion-element" itemprop="description">嘘，要发车了</p>
+          
         </div>
         <nav class="site-state motion-element">
-          <div class="site-state-item site-state-posts">
-            <a href="/archives">
-              <span class="site-state-item-count">15</span>
-              <span class="site-state-item-name">日志</span>
-            </a>
-          </div>
 
           
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
             <div class="site-state-item site-state-categories">
-              <a href="/categories">
+              <a href="/categories/index.html">
                 <span class="site-state-item-count">3</span>
                 <span class="site-state-item-name">分类</span>
               </a>
@@ -872,8 +1012,10 @@
           
 
           
+            
+            
             <div class="site-state-item site-state-tags">
-              <a href="/tags">
+              <a href="/tags/index.html">
                 <span class="site-state-item-count">17</span>
                 <span class="site-state-item-name">标签</span>
               </a>
@@ -930,6 +1072,8 @@
 
       
 
+      
+
     </div>
   </aside>
 
@@ -951,6 +1095,17 @@
 </div>
 
 
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
 
         
 
@@ -958,9 +1113,13 @@
       </div>
     </footer>
 
-    <div class="back-to-top">
-      <i class="fa fa-arrow-up"></i>
-    </div>
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
   </div>
 
   
@@ -980,6 +1139,15 @@
 
 
   
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1005,26 +1173,25 @@
   
 
 
-  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
 
-  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
-
-
-
-  
-  
-
-  
-
-  
-
-
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
 
 
 
   
+  
 
+  
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
 
 
   
@@ -1037,8 +1204,34 @@
 
 
 
+
   
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "32e23a1612e5408fadd965ec792fc6bd",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
   
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
 
   
 
@@ -1048,6 +1241,7 @@
 
   
 
+  
 
 </body>
 </html>
